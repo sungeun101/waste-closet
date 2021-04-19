@@ -1,4 +1,4 @@
-[
+export const wasteData = [
     {
         "id": "1",
         "name": "종이/종이팩",
