@@ -5,6 +5,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import Navigation from "./components/Navigation";
 import { questionData } from "./data/questionData";
 import Home from "./pages/Home";
 import QnA from "./pages/QnA";
@@ -14,6 +15,8 @@ function App() {
     <div className="App">
       <Router>
         <div>
+          
+          {/* <Navigation /> */}
           <nav>
             <ul>
               <li>
@@ -30,7 +33,7 @@ function App() {
               <Home />
             </Route>
             <Route path="/qna">
-              <QnA questiondata={questionData}/>
+              <QnA questionData={questionData}/>
             </Route>
           </Switch> 
         </div>

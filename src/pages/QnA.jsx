@@ -1,163 +1,52 @@
-// import React, { useEffect, useRef, useState } from 'react';
-// import axios from 'axios';
-
-// const axiosInstance = axios.create({
-//     baseURL: `https://limitless-sierra-67996.herokuapp.com/v1/questions`,
-//     timeout: 1000
-// })
-
-// const QnA = ({ questionData }) => {
-//     const [loading, setLoading] = useState(false)
-//     const [error, setError] = useState(null)
-//     const [questions, setQuestions] = useState(null)
-
-//     const [content, setContent] = useState('')
-//     const [title, setTitle] = useState('')
-
-//     const handleChange = ({ target: { value } }) => {
-//         setTitle(value)
-//     }
-//     // const handleChange = ({ target: { value, name } }) => {
-//     //     if (name === title) {
-//     //         setTitle(value)
-//     //     } else {
-//     //         setContent(value)
-//     //     }
-//     // }
-
-//     const addQuestion = title => {
-//         const newQuestions = [...questions, {title}]
-//         setQuestions(newQuestions)
-//     }
-
-//     const handleSubmit = async event => {
-//         event.preventDefault()
-//         if(!title) return
-//         addQuestion(title)
-
-//         const res = await axios.post(`https://limitless-sierra-67996.herokuapp.com/v1/questions`, {
-//             "title": title,
-//             "body": "내용"
-//         })
-//         // const res = await axios.post(`https://limitless-sierra-67996.herokuapp.com/v1/questions`, {
-//         //     questiondata
-//         // })
-//         console.log(res.data)
-//         // setQuestions(res.data)
-//         // console.log(body)
-//         // console.log({ questiondata })
-
-//         setTitle('')
-//     }
-
-//     const inputRef = useRef(null)
-//     useEffect(() => {
-//         inputRef.current.focus()
-//     }, [])
-
-//     // const fetchQuestions = async () => {
-//     //     try {
-//     //         setQuestions(null)
-//     //         setError(null)
-//     //         setLoading(true)
-
-//     //         const response = await axiosInstance.get();
-//     //         setQuestions(response.data.results)
-//     //         // setQuestions(res.data)
-//     //         // console.log(response)
-//     //         // console.log(response.data.results)
-//     //     } catch (e) {
-//     //         setError(e);
-//     //     }
-//     //     setLoading(false)
-//     // }
-
-//     // useEffect(() => {
-//     //     fetchQuestions()
-//     // }, [])
-
-//     if (error) return <div>에러가 발생했습니다</div>;
-
-//     return (
-//         <div>
-//             <form onSubmit={handleSubmit}>
-//                 <input
-//                     type="text"
-//                     name="title"
-//                     value={title}
-//                     placeholder="제목"
-//                     onChange={handleChange}
-//                     ref={inputRef}
-//                 />
-//                 {/* <input
-//                     type="text"
-//                     name="content"
-//                     value={content}
-//                     onChange={handleChange}
-//                 /> */}
-//                 <button type="submit">질문 남기기</button>
-//             </form>
-
-
-//             {loading || !questions ? (
-//                 <div>Loading..</div>
-//             ) : (
-//                     questions.map(question => (
-//                         <li key={question.id}>
-//                             {question.title}
-//                             - {question.body}
-//                         </li>
-//                     )))}
-
-//         </div>
-
-//     );
-// };
-
-// export default QnA;
-
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Question from '../components/Question';
 import QuestionForm from '../components/QuestionForm';
 import axios from 'axios';
+import { Form, Input, Button, List, Avatar } from 'antd';
+import QnaHeader from '../components/QnaHeader';
 
-const axiosInstance = axios.create({
-    baseURL: `https://limitless-sierra-67996.herokuapp.com/v1/questions`,
-    timeout: 1000
-})
+const baseURL = 'https://limitless-sierra-67996.herokuapp.com/v1/questions'
+const layout = {
+    labelCol: {
+        span: 8,
+    },
+    wrapperCol: {
+        span: 16,
+    },
+};
 
-const QnA = () => {
+const QnA = ({ questionData }) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const [questions, setQuestions] = useState([{ title: 'hello' }])
+    const [questions, setQuestions] = useState([{ title: 'hello', body: '내용' }])
 
     useEffect(() => {
-
         const fetchQuestions = async () => {
             setError(null)
             setLoading(true)
             try {
-                console.log('useEffect')
-                const response = await axiosInstance.get();
-                // response.data.results.map((arr, id) => addQuestion(arr.title))
-                // addQuestion(response.data)
-                setQuestions(response.data)
-                console.log(response.data)
+                const response = await axios.get(baseURL, { params: { page: 15 } });
+                setQuestions(response.data.results)
             } catch (e) {
                 setError(e);
             }
             setLoading(false)
         }
-
         fetchQuestions()
     }, [])
 
-    const addQuestion = async title => {
-        const newQuestions = [...questions, { title }]
+    const addQuestion = async values => {
+        const { title, body } = values
+        await axios.post(baseURL, { title, body });
+        const newQuestions = [...questions, values]
         setQuestions(newQuestions)
-        // console.log(newQuestions)
     }
+
+    //handleSubmit
+    const onFinish = (values) => {
+        console.log('Success:', values.question);
+        addQuestion(values.question)
+    };
 
     return (
         <>
@@ -168,14 +57,49 @@ const QnA = () => {
                 </div>
             ) :
                 (<>
-                    <QuestionForm addQuestion={addQuestion} />
-                    {questions && (
+                    <QnaHeader />
+
+                    <Form {...layout} name="nest-messages" onFinish={onFinish}>
+                        <Form.Item
+                            name={['question', 'title']}
+                            label="제목"
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item name={['question', 'body']} label="내용">
+                            <Input.TextArea />
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                            <Button type="primary" htmlType="submit">
+                                질문하기
+                            </Button>
+                        </Form.Item>
+                    </Form>
+
+
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={questions}
+                        renderItem={questions => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                    title={questions.title}
+                                    description={questions.body}
+                                />
+                            </List.Item>
+                        )}
+                    />
+
+                    {/* {questions && (
                         questions.map(question => (
                             <Question
                                 key={question.id}
                                 question={question}
                             />)))
-                    }
+                    } */}
+
+
                 </>)
             }
         </>
@@ -183,3 +107,4 @@ const QnA = () => {
 }
 
 export default QnA;
+

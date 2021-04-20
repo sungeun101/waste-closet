@@ -18,7 +18,6 @@ const QuestionForm = ({ addQuestion }) => {
     }, [])
 
     return (
-
         <form onSubmit={handleSubmit}>
             <input
                 type="text"
@@ -26,7 +25,7 @@ const QuestionForm = ({ addQuestion }) => {
                 onChange={e => setValue(e.target.value)}
                 ref={inputRef}
             />
-            <Button variant="contained" color="primary">질문하기</Button>
+            <Button variant="contained" color="primary" onSubmit={handleSubmit}>질문하기</Button>
         </form>
     );
 };
