@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import { Input, } from 'antd';
+import 'antd/dist/antd.css';
+import { Input } from 'antd';
 
 const QnaHeader = () => {
     const inputRef = useRef(null);
@@ -12,16 +13,14 @@ const QnaHeader = () => {
     };
 
     return (
-        <div>
-            <Input.Search
-                placeholder="이름으로 검색"
-                allowClear
-                enterButton="Search"
-                size="large"
-                onSearch={onSearch}
-                ref={inputRef}
-            />
-        </div>
+        <Input.Search
+            placeholder="이름으로 검색"
+            allowClear
+            enterButton="Search"
+            size="large"
+            onSearch={onSearch}
+            ref={inputRef}
+        />
     );
 };
 

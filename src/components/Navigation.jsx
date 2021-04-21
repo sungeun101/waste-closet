@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { MailOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import 'antd/dist/antd.css';
 
 const Navigation = () => {
-    const [current, setCurrent] = useState('qna')
+    const [current, setCurrent] = useState('home')
 
     const handleClick = e => {
         setCurrent(e.key)

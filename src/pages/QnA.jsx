@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Question from '../components/Question';
-import QuestionForm from '../components/QuestionForm';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Input, Button, List, Avatar } from 'antd';
+import { Form, Input, Button, List, Spin } from 'antd';
 import QnaHeader from '../components/QnaHeader';
+import 'antd/dist/antd.css';
 
 const baseURL = 'https://limitless-sierra-67996.herokuapp.com/v1/questions'
 const layout = {
@@ -15,18 +14,24 @@ const layout = {
     },
 };
 
-const QnA = ({ questionData }) => {
+const QnA = () => {
+    const initialQuestionState = {
+        id: null,
+        title: '',
+        body: ''
+    }
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const [questions, setQuestions] = useState([{ title: 'hello', body: '내용' }])
+    const [questions, setQuestions] = useState([initialQuestionState])
 
     useEffect(() => {
         const fetchQuestions = async () => {
             setError(null)
             setLoading(true)
             try {
-                const response = await axios.get(baseURL, { params: { page: 15 } });
+                const response = await axios.get(baseURL, { params: { page: 17 } });
                 setQuestions(response.data.results)
+                // console.log(response.data.results)
             } catch (e) {
                 setError(e);
             }
@@ -37,24 +42,29 @@ const QnA = ({ questionData }) => {
 
     const addQuestion = async values => {
         const { title, body } = values
-        await axios.post(baseURL, { title, body });
-        const newQuestions = [...questions, values]
+        const res = await axios.post(baseURL, { title, body });
+        const newQuestions = [{ ...questions, values }]
         setQuestions(newQuestions)
+        console.log(newQuestions)
     }
 
-    //handleSubmit
-    const onFinish = (values) => {
-        console.log('Success:', values.question);
+    const onFinish = async (values) => {
         addQuestion(values.question)
     };
+
+    const remove = (id) => {
+        axios.delete(`baseURL/${id}`)
+    }
+
+    // const removeAll =()=>{
+    //     axios.delete(baseURL)
+    // }
 
     return (
         <>
             {error && <div>Something went wrong!</div>}
             {loading ? (
-                <div>
-                    Loading...
-                </div>
+                <Spin />
             ) :
                 (<>
                     <QnaHeader />
@@ -62,12 +72,11 @@ const QnA = ({ questionData }) => {
                     <Form {...layout} name="nest-messages" onFinish={onFinish}>
                         <Form.Item
                             name={['question', 'title']}
-                            label="제목"
                         >
-                            <Input />
+                            <Input placeholder="제목" />
                         </Form.Item>
-                        <Form.Item name={['question', 'body']} label="내용">
-                            <Input.TextArea />
+                        <Form.Item name={['question', 'body']} >
+                            <Input.TextArea placeholder="내용" />
                         </Form.Item>
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                             <Button type="primary" htmlType="submit">
@@ -87,6 +96,8 @@ const QnA = ({ questionData }) => {
                                     title={questions.title}
                                     description={questions.body}
                                 />
+                                <Button type="link">edit</Button>
+                                <Button type="link" onClick={remove}>delete</Button>
                             </List.Item>
                         )}
                     />
