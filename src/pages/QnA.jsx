@@ -23,42 +23,67 @@ const QnA = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [questions, setQuestions] = useState([initialQuestionState])
+    const [selectedQuestion, setSelectedQuestion] = useState(initialQuestionState)
+
+    const { id, title, body } = selectedQuestion
+
+    const handleChange = e => {
+        const { name, value } = e.target
+        setSelectedQuestion({
+            ...selectedQuestion,
+            [name]: value
+        })
+    }
+    // const onReset = () => {
+    //     setSelectedQuestion(initialQuestionState)
+    // }
+
+    const fetchQuestions = async () => {
+        setError(null)
+        setLoading(true)
+        try {
+            const response = await axios.get(baseURL, { params: { page: 17 } });
+            setQuestions(response.data.results)
+            console.log(response.data.results)
+        } catch (e) {
+            setError(e);
+        }
+        setLoading(false)
+    }
 
     useEffect(() => {
-        const fetchQuestions = async () => {
-            setError(null)
-            setLoading(true)
-            try {
-                const response = await axios.get(baseURL, { params: { page: 17 } });
-                setQuestions(response.data.results)
-                // console.log(response.data.results)
-            } catch (e) {
-                setError(e);
-            }
-            setLoading(false)
-        }
         fetchQuestions()
     }, [])
 
     const addQuestion = async values => {
         const { title, body } = values
         const res = await axios.post(baseURL, { title, body });
-        const newQuestions = [{ ...questions, values }]
-        setQuestions(newQuestions)
-        console.log(newQuestions)
+        console.log(res)
+        fetchQuestions()
     }
 
-    const onFinish = async (values) => {
-        addQuestion(values.question)
-    };
-
-    const remove = (id) => {
-        axios.delete(`baseURL/${id}`)
+    const deleteQuestion = async id => {
+        await axios.delete(baseURL + '/' + id)
+        fetchQuestions()
     }
 
-    // const removeAll =()=>{
-    //     axios.delete(baseURL)
+    // const deleteAllQuestions = async () => {
+    //     await axios.delete(baseURL)
     // }
+
+    const openEditForm = question => {
+        // console.log(question)
+        setSelectedQuestion(question)
+    }
+
+    const updateQuestion = async () => {
+        console.log(selectedQuestion)
+        const res = await axios.patch(baseURL + '/' + id, { title, body })
+        console.log(res)
+        console.log(questions)
+        fetchQuestions()
+    }
+
 
     return (
         <>
@@ -69,13 +94,11 @@ const QnA = () => {
                 (<>
                     <QnaHeader />
 
-                    <Form {...layout} name="nest-messages" onFinish={onFinish}>
-                        <Form.Item
-                            name={['question', 'title']}
-                        >
+                    <Form {...layout} name="nest-messages" onFinish={addQuestion}>
+                        <Form.Item name='title' >
                             <Input placeholder="제목" />
                         </Form.Item>
-                        <Form.Item name={['question', 'body']} >
+                        <Form.Item name='body'>
                             <Input.TextArea placeholder="내용" />
                         </Form.Item>
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
@@ -85,32 +108,39 @@ const QnA = () => {
                         </Form.Item>
                     </Form>
 
+                    <Form {...layout} name="nest-messages2" onFinish={updateQuestion}>
+                        <Form.Item>
+                            <Input name='title' value={title} onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item>
+                            <Input.TextArea name='body' value={body} onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                            <Button type="default" htmlType="submit">
+                                수정하기
+                            </Button>
+                            {/* <Button type="default" onClick={onReset}>
+                                초기화
+                            </Button> */}
+                        </Form.Item>
+                    </Form>
+
+                    {/* <Button type="link" onClick={deleteAllQuestions}>모두 삭제</Button> */}
 
                     <List
                         itemLayout="horizontal"
                         dataSource={questions}
-                        renderItem={questions => (
+                        renderItem={question => (
                             <List.Item>
                                 <List.Item.Meta
-                                    // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                    title={questions.title}
-                                    description={questions.body}
+                                    title={question.title}
+                                    description={question.body}
                                 />
-                                <Button type="link">edit</Button>
-                                <Button type="link" onClick={remove}>delete</Button>
+                                <Button type="link" onClick={() => openEditForm(question)}>edit</Button>
+                                <Button type="link" onClick={() => deleteQuestion(question.id)}>delete</Button>
                             </List.Item>
                         )}
                     />
-
-                    {/* {questions && (
-                        questions.map(question => (
-                            <Question
-                                key={question.id}
-                                question={question}
-                            />)))
-                    } */}
-
-
                 </>)
             }
         </>
