@@ -44,7 +44,7 @@ const QnA = () => {
         try {
             const response = await axios.get(baseURL, { params: { page: 17 } });
             setQuestions(response.data.results)
-            console.log(response.data.results)
+            // console.log(response.data.results)
         } catch (e) {
             setError(e);
         }
@@ -57,8 +57,7 @@ const QnA = () => {
 
     const addQuestion = async values => {
         const { title, body } = values
-        const res = await axios.post(baseURL, { title, body });
-        console.log(res)
+        await axios.post(baseURL, { title, body });
         fetchQuestions()
     }
 
@@ -67,20 +66,19 @@ const QnA = () => {
         fetchQuestions()
     }
 
-    // const deleteAllQuestions = async () => {
-    //     await axios.delete(baseURL)
-    // }
+    const deleteAllQuestions = async () => {
+        for await (const question of questions) {
+            await axios.delete(baseURL + '/' + question.id)
+        }
+        fetchQuestions()
+    }
 
     const openEditForm = question => {
-        // console.log(question)
         setSelectedQuestion(question)
     }
 
     const updateQuestion = async () => {
-        console.log(selectedQuestion)
-        const res = await axios.patch(baseURL + '/' + id, { title, body })
-        console.log(res)
-        console.log(questions)
+        await axios.patch(baseURL + '/' + id, { title, body })
         fetchQuestions()
     }
 
@@ -125,7 +123,7 @@ const QnA = () => {
                         </Form.Item>
                     </Form>
 
-                    {/* <Button type="link" onClick={deleteAllQuestions}>모두 삭제</Button> */}
+                    <Button danger onClick={deleteAllQuestions}>모두 삭제</Button>
 
                     <List
                         itemLayout="horizontal"
