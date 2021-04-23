@@ -26,7 +26,8 @@ const QnA = () => {
     const [selectedQuestion, setSelectedQuestion] = useState(initialQuestionState)
     const [currentPageNumber, setCurrentPageNumber] = useState(1)
     const [totalResults, setTotalResults] = useState(1)
-
+    const [deleteCheck, setDeleteCheck] = useState(false)
+    const [idToBeDeleted, setIdToBeDeleted] = useState(1)
 
     const fetchQuestions = async () => {
         setError(null)
@@ -36,6 +37,7 @@ const QnA = () => {
             // console.log(response)
             setQuestions(response.data.results)
             setTotalResults(response.data.totalResults)
+            setDeleteCheck(false)
         } catch (e) {
             setError(e);
         }
@@ -72,6 +74,7 @@ const QnA = () => {
     }
 
     const deleteQuestion = async id => {
+        setDeleteCheck(false)
         await axios.delete(baseURL + '/' + id)
         fetchQuestions()
     }
@@ -92,6 +95,11 @@ const QnA = () => {
     const updateQuestion = async () => {
         await axios.patch(baseURL + '/' + id, { title, body })
         fetchQuestions()
+    }
+
+    const handleDeleteCheck = id => {
+        setDeleteCheck(true)
+        setIdToBeDeleted(id)
     }
 
     return (
@@ -143,12 +151,35 @@ const QnA = () => {
                                     title={question.title}
                                     description={question.body}
                                 />
-                                <Button type="link" onClick={() => openEditForm(question)}>edit</Button>
-                                <Button type="link" onClick={() => deleteQuestion(question.id)}>delete</Button>
+                                {
+                                    (deleteCheck === true && question.id === idToBeDeleted) ? (
+                                        <Alert
+                                            message="정말 삭제하시겠습니까?"
+                                            type="warning"
+                                            showIcon
+                                            action={
+                                                <Space>
+                                                    <Button onClick={() => deleteQuestion(question.id)} size="small" type="primary" ghost >
+                                                        Yes
+                                                </Button>
+                                                    <Button onClick={() => setDeleteCheck(false)} size="small" danger ghost >
+                                                        No
+                                                </Button>
+                                                </Space>
+                                            }
+                                        />
+                                    ) : (
+                                            <>
+                                                <Button type="link" onClick={() => openEditForm(question)}>edit</Button>
+                                                <Button type="link" onClick={() => handleDeleteCheck(question.id)}>delete</Button>
+                                            </>
+                                        )
+                                }
                             </List.Item>
                         )}
                     />
                 )}
+
 
             <Pagination
                 onChange={handlePageChange}
