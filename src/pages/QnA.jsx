@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Input, Button, List, Spin, Pagination, Alert, Space } from 'antd';
-import QnaHeader from '../components/QnaHeader';
 import 'antd/dist/antd.css';
+import { Form, Input, Button, List, Spin, Pagination, Popconfirm, message, Collapse, Select } from 'antd';
+import QnaHeader from '../components/QnaHeader';
+import AddForm from '../components/AddForm';
 
 const baseURL = 'https://limitless-sierra-67996.herokuapp.com/v1/questions'
 const layout = {
@@ -26,18 +27,16 @@ const QnA = () => {
     const [selectedQuestion, setSelectedQuestion] = useState(initialQuestionState)
     const [currentPageNumber, setCurrentPageNumber] = useState(1)
     const [totalResults, setTotalResults] = useState(1)
-    const [deleteCheck, setDeleteCheck] = useState(false)
-    const [idToBeDeleted, setIdToBeDeleted] = useState(1)
+    const [isBtnClicked, setIsBtnClicked] = useState(false)
 
     const fetchQuestions = async () => {
         setError(null)
         setLoading(true)
         try {
             const response = await axios.get(baseURL, { params: { page: currentPageNumber } })
-            // console.log(response)
+            console.log(response)
             setQuestions(response.data.results)
             setTotalResults(response.data.totalResults)
-            setDeleteCheck(false)
         } catch (e) {
             setError(e);
         }
@@ -67,15 +66,9 @@ const QnA = () => {
         })
     }
 
-    const addQuestion = async values => {
-        const { title, body } = values
-        await axios.post(baseURL, { title, body });
-        fetchQuestions()
-    }
-
-    const deleteQuestion = async id => {
-        setDeleteCheck(false)
+    const confirmDelete = async id => {
         await axios.delete(baseURL + '/' + id)
+        message.success('삭제되었습니다')
         fetchQuestions()
     }
 
@@ -90,17 +83,25 @@ const QnA = () => {
 
     const openEditForm = question => {
         setSelectedQuestion(question)
+        setIsBtnClicked(true)
     }
-
     const updateQuestion = async () => {
         await axios.patch(baseURL + '/' + id, { title, body })
         fetchQuestions()
     }
 
-    const handleDeleteCheck = id => {
-        setDeleteCheck(true)
-        setIdToBeDeleted(id)
-    }
+
+    const { Panel } = Collapse;
+
+    const genExtra = () => (
+        // <SettingOutlined
+        //     onClick={event => {
+        //         event.stopPropagation();
+        //     }}
+        // />
+        <span>답변 완료</span>
+    );
+
 
     return (
         <>
@@ -108,77 +109,81 @@ const QnA = () => {
 
             <QnaHeader />
 
-            <Form {...layout} name="nest-messages" onFinish={addQuestion}>
-                <Form.Item name='title' >
-                    <Input placeholder="제목" />
-                </Form.Item>
-                <Form.Item name='body'>
-                    <Input.TextArea placeholder="내용" />
-                </Form.Item>
-                <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-                    <Button type="primary" htmlType="submit">
-                        질문하기
-                            </Button>
-                </Form.Item>
-            </Form>
-
-            <Form {...layout} name="nest-messages2" onFinish={updateQuestion}>
-                <Form.Item>
-                    <Input name='title' value={title} onChange={handleChange} />
-                </Form.Item>
-                <Form.Item>
-                    <Input.TextArea name='body' value={body} onChange={handleChange} />
-                </Form.Item>
-                <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-                    <Button type="default" htmlType="submit">
-                        수정하기
-                            </Button>
-                </Form.Item>
-            </Form>
+            <AddForm fetchQuestions={fetchQuestions} baseURL={baseURL} layout={layout} />
 
             <Button danger onClick={deleteAllQuestions}>현재 페이지 삭제</Button>
 
-            {loading ? (
-                <Spin />
-            ) : (
+            {
+                loading ? (
+                    <Spin />
+                ) : (
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={questions}
+                            renderItem={question => (
+                                <Collapse
+                                    onChange={() => setIsBtnClicked(false)}
+                                // expandIconPosition={'right'}
+                                >
+                                    <Panel
+                                        header={question.title}
+                                        // key="1"
+                                        extra={genExtra()}>
 
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={questions}
-                        renderItem={question => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    title={question.title}
-                                    description={question.body}
-                                />
-                                {
-                                    (deleteCheck === true && question.id === idToBeDeleted) ? (
-                                        <Alert
-                                            message="정말 삭제하시겠습니까?"
-                                            type="warning"
-                                            showIcon
-                                            action={
-                                                <Space>
-                                                    <Button onClick={() => deleteQuestion(question.id)} size="small" type="primary" ghost >
-                                                        Yes
-                                                </Button>
-                                                    <Button onClick={() => setDeleteCheck(false)} size="small" danger ghost >
-                                                        No
-                                                </Button>
-                                                </Space>
-                                            }
-                                        />
-                                    ) : (
+                                        {isBtnClicked === false ? (
                                             <>
-                                                <Button type="link" onClick={() => openEditForm(question)}>edit</Button>
-                                                <Button type="link" onClick={() => handleDeleteCheck(question.id)}>delete</Button>
+                                                <div>{question.body}</div>
+                                                <Button
+                                                    type="link"
+                                                    onClick={() => openEditForm(question)}>edit</Button>
+                                                <Popconfirm
+                                                    title="정말 삭제하시겠습니까?"
+                                                    onConfirm={() => confirmDelete(question.id)}
+                                                    okText="Yes"
+                                                    cancelText="No"
+                                                >
+                                                    <a href="#">delete</a>
+                                                </Popconfirm>
                                             </>
-                                        )
-                                }
-                            </List.Item>
-                        )}
-                    />
-                )}
+                                        ) : (
+                                                <Form {...layout}
+                                                    name="nest-messages2"
+                                                    onFinish={updateQuestion}>
+                                                    <Form.Item>
+                                                        <Input
+                                                            name='title'
+                                                            value={title}
+                                                            onChange={handleChange} />
+                                                    </Form.Item>
+                                                    <Form.Item>
+                                                        <Input.TextArea
+                                                            name='body'
+                                                            value={body}
+                                                            onChange={handleChange} />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                                                        <Button
+                                                            type="default"
+                                                            htmlType="submit">
+                                                            수정하기
+                                                        </Button>
+                                                        <Button
+                                                            type="default"
+                                                            onClick={() => setIsBtnClicked(false)}>
+                                                            취소
+                                                        </Button>
+                                                    </Form.Item>
+                                                </Form>
+
+                                            )}
+
+                                    </Panel>
+                                </Collapse>
+                            )}
+                        />
+                    )
+            }
 
 
             <Pagination
