@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import styled from 'styled-components'
 import 'antd/dist/antd.css';
-import { Form, Input, Button, List, Spin, Pagination, Popconfirm, message, Collapse, Select } from 'antd';
-import QnaHeader from '../components/QnaHeader';
+import { Form, Input, Button,  Spin, Popconfirm, message, Collapse } from 'antd';
+import SearchBar from '../components/SearchBar';
 import AddForm from '../components/AddForm';
+import { StyledButton,StyledCollapse,ContentBox,Content,StyledPagination} from './QnA.elements';
+// import { Container, Button } from '../../globalStyles';
 
 const baseURL = 'https://limitless-sierra-67996.herokuapp.com/v1/questions'
-const layout = {
-    labelCol: {
-        span: 8,
-    },
-    wrapperCol: {
-        span: 16,
-    },
-};
 
 const QnA = () => {
     const initialQuestionState = {
@@ -87,9 +82,9 @@ const QnA = () => {
     }
     const updateQuestion = async () => {
         await axios.patch(baseURL + '/' + id, { title, body })
+        message.success('수정되었습니다')
         fetchQuestions()
     }
-
 
     const { Panel } = Collapse;
 
@@ -107,46 +102,46 @@ const QnA = () => {
         <>
             {error && <div>Something went wrong!</div>}
 
-            <QnaHeader />
+            <SearchBar />
 
-            <AddForm fetchQuestions={fetchQuestions} baseURL={baseURL} layout={layout} />
+            <AddForm fetchQuestions={fetchQuestions} baseURL={baseURL} />
 
-            <Button danger onClick={deleteAllQuestions}>현재 페이지 삭제</Button>
+            <StyledButton danger onClick={deleteAllQuestions}>현재 페이지 삭제</StyledButton>
 
             {
                 loading ? (
                     <Spin />
                 ) : (
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={questions}
-                            renderItem={question => (
-                                <Collapse
-                                    onChange={() => setIsBtnClicked(false)}
-                                // expandIconPosition={'right'}
-                                >
+                            <StyledCollapse accordion
+                            onChange={() => setIsBtnClicked(false)}
+                            // expandIconPosition={'right'}
+                            >
+                                {questions.map(question => (
                                     <Panel
                                         header={question.title}
                                         // key="1"
                                         extra={genExtra()}>
 
                                         {isBtnClicked === false ? (
-                                            <>
-                                                <div>{question.body}</div>
-                                                <Button
-                                                    type="link"
-                                                    onClick={() => openEditForm(question)}>edit</Button>
-                                                <Popconfirm
-                                                    title="정말 삭제하시겠습니까?"
-                                                    onConfirm={() => confirmDelete(question.id)}
-                                                    okText="Yes"
-                                                    cancelText="No"
-                                                >
-                                                    <a href="#">delete</a>
-                                                </Popconfirm>
-                                            </>
+                                            <ContentBox>
+                                                <Content>{question.body}</Content>
+                                                <div>
+                                                    <Button
+                                                        type="link"
+                                                        onClick={() => openEditForm(question)}>edit</Button>
+                                                    <Popconfirm
+                                                        title="정말 삭제하시겠습니까?"
+                                                        onConfirm={() => confirmDelete(question.id)}
+                                                        okText="Yes"
+                                                        cancelText="No"
+                                                        >
+                                                        <Button
+                                                        type="link">delete</Button>
+                                                    </Popconfirm>
+                                                </div>
+                                            </ContentBox>
                                         ) : (
-                                                <Form {...layout}
+                                                <Form 
                                                     name="nest-messages2"
                                                     onFinish={updateQuestion}>
                                                     <Form.Item>
@@ -161,8 +156,7 @@ const QnA = () => {
                                                             value={body}
                                                             onChange={handleChange} />
                                                     </Form.Item>
-                                                    <Form.Item
-                                                        wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                                                    <Form.Item>
                                                         <Button
                                                             type="default"
                                                             htmlType="submit">
@@ -175,18 +169,13 @@ const QnA = () => {
                                                         </Button>
                                                     </Form.Item>
                                                 </Form>
-
                                             )}
-
                                     </Panel>
-                                </Collapse>
+                                ))}     
+                            </StyledCollapse>
                             )}
-                        />
-                    )
-            }
-
-
-            <Pagination
+   
+            <StyledPagination
                 onChange={handlePageChange}
                 // onChange={page => handlePageChange(page)}
                 total={totalResults}

@@ -1,19 +1,18 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom";
-import Navigation from "./components/Navigation";
-import Home from "./pages/Home";
-import QnA from "./pages/QnA";
+import React from 'react';
+// import GlobalStyle from './globalStyles';
+import { Container } from './globalStyles';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import Home from './pages/Home';
+import QnA from './pages/QnA';
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <div>
-          <Navigation/>
+        {/* <GlobalStyle /> */}
+        <Container>
+          <Navigation />
           <Switch>
             <Route path="/" exact>
               <Home />
@@ -21,9 +20,9 @@ function App() {
             <Route path="/qna">
               <QnA />
             </Route>
-          </Switch> 
-        </div>
-    </Router>
+          </Switch>
+        </Container>
+      </Router>
     </div>
   );
 }

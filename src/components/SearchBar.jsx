@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import 'antd/dist/antd.css';
 import { Input } from 'antd';
 
-const QnaHeader = () => {
+const SearchBar = () => {
     const inputRef = useRef(null);
 
     const onSearch = value => {
@@ -24,4 +24,4 @@ const QnaHeader = () => {
     );
 };
 
-export default QnaHeader;
+export default SearchBar;
