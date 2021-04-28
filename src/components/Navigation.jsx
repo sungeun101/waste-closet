@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import 'antd/dist/antd.css';
 
 const Navigation = () => {
+    // 처음 웹사이트 들어가거나 새로고침 할 때 메뉴 선택값이 없음
     const [current, setCurrent] = useState('')
-
+    
     const handleClick = e => {
         setCurrent(e.key)
         console.log(e)
