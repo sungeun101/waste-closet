@@ -1,20 +1,7 @@
 import styled from 'styled-components';
 import 'antd/dist/antd.css';
-import {
-  Form,
-  Input,
-  Button,
-  Spin,
-  Pagination,
-  Popconfirm,
-  message,
-  Collapse,
-} from 'antd';
-const { Search } = Input;
+import { Button, Pagination, Popconfirm, Collapse } from 'antd';
 
-export const StyledSearch = styled(Search)`
-  margin-top: 1.5rem;
-`;
 export const BtnContainer = styled.div`
   display: flex;
   justify-content: space-between;
