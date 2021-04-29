@@ -29,12 +29,14 @@ const QnA = ({ showModal, setShowModal }) => {
   );
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
-  const [isBtnClicked, setIsBtnClicked] = useState(false);
+  // isBtnClicked라는 변수이름이 무엇을 의미하는지 모호함
+  const [isBtnClicked, setIsBtnClicked] = useState(false); 
 
   const fetchQuestions = async () => {
-    setError(null);
+    setError(null); 
     setLoading(true);
     try {
+      await fetchQuestions
       const response = await axios.get(baseURL, {
         params: { page: currentPageNumber },
       });
@@ -60,7 +62,7 @@ const QnA = ({ showModal, setShowModal }) => {
     setQuestions(res.data.results);
   };
 
-  const { id, title, body } = selectedQuestion;
+  const { id, title, body } = selectedQuestion; 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -122,6 +124,7 @@ const QnA = ({ showModal, setShowModal }) => {
           질문하기
         </Button>
         {showModal && (
+          // Ant Modal을 이용해보세요!
           <Modal
             showModal={showModal}
             setShowModal={setShowModal}
@@ -140,7 +143,8 @@ const QnA = ({ showModal, setShowModal }) => {
         <StyledCollapse accordion onChange={() => setIsBtnClicked(false)}>
           {questions.map((question) => (
             <Panel header={question.title} extra={genExtra()}>
-              {isBtnClicked === false ? (
+              {/* !isBtnClicked 로 더 간편하게 표현할 수 있어요 */}
+              {isBtnClicked === false ? ( 
                 <ContentBox>
                   <Content>{question.body}</Content>
                   <div>
