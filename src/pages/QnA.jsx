@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Spin, message, Collapse } from 'antd';
 import SearchBar from '../components/SearchBar';
-import Modal from '../components/Modal';
+import ModalForm from '../components/ModalForm';
 import {
   StyledButton,
   BtnContainer,
@@ -15,32 +15,26 @@ import {
 
 const baseURL = 'https://limitless-sierra-67996.herokuapp.com/v1/questions';
 
-const QnA = ({ showModal, setShowModal }) => {
-  const initialQuestionState = {
-    id: null,
-    title: '',
-    body: '',
-  };
+const QnA = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [questions, setQuestions] = useState([initialQuestionState]);
-  const [selectedQuestion, setSelectedQuestion] = useState(
-    initialQuestionState
-  );
+  const [questions, setQuestions] = useState([]);
+  const [selectedQuestion, setSelectedQuestion] = useState({});
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
   // isBtnClicked라는 변수이름이 무엇을 의미하는지 모호함
-  const [isBtnClicked, setIsBtnClicked] = useState(false); 
+  const [isBtnClicked, setIsBtnClicked] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const [form] = Form.useForm();
 
   const fetchQuestions = async () => {
-    setError(null); 
+    setError(null);
     setLoading(true);
     try {
-      await fetchQuestions
       const response = await axios.get(baseURL, {
         params: { page: currentPageNumber },
       });
-      console.log(response);
       setQuestions(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
@@ -53,6 +47,15 @@ const QnA = ({ showModal, setShowModal }) => {
     fetchQuestions();
   }, []);
 
+  const addQuestion = async (values) => {
+    const { title, body } = values;
+    console.log(values);
+
+    await axios.post(baseURL, { title, body });
+    message.success('질문이 작성되었습니다');
+    fetchQuestions();
+  };
+
   const handlePageChange = async (page) => {
     // 1. current page setting
     setCurrentPageNumber(page);
@@ -62,7 +65,7 @@ const QnA = ({ showModal, setShowModal }) => {
     setQuestions(res.data.results);
   };
 
-  const { id, title, body } = selectedQuestion; 
+  const { id, title, body } = selectedQuestion;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -109,8 +112,9 @@ const QnA = ({ showModal, setShowModal }) => {
     // 댓글이 없으면 댓글달기 아이콘 표시
   );
 
-  const openModal = () => {
-    setShowModal((prev) => !prev);
+  const showModal = () => {
+    form.resetFields();
+    setVisible(true);
   };
 
   return (
@@ -120,18 +124,16 @@ const QnA = ({ showModal, setShowModal }) => {
       <SearchBar />
 
       <BtnContainer>
-        <Button type="primary" onClick={openModal}>
+        <Button type="primary" onClick={showModal}>
           질문하기
         </Button>
-        {showModal && (
-          // Ant Modal을 이용해보세요!
-          <Modal
-            showModal={showModal}
-            setShowModal={setShowModal}
-            fetchQuestions={fetchQuestions}
-            baseURL={baseURL}
-          />
-        )}
+        <ModalForm
+          form={form}
+          visible={visible}
+          setVisible={setVisible}
+          addQuestion={addQuestion}
+        />
+
         <StyledButton danger onClick={deleteAllQuestions}>
           현재 페이지 삭제
         </StyledButton>
@@ -144,7 +146,7 @@ const QnA = ({ showModal, setShowModal }) => {
           {questions.map((question) => (
             <Panel header={question.title} extra={genExtra()}>
               {/* !isBtnClicked 로 더 간편하게 표현할 수 있어요 */}
-              {isBtnClicked === false ? ( 
+              {isBtnClicked === false ? (
                 <ContentBox>
                   <Content>{question.body}</Content>
                   <div>
@@ -160,7 +162,7 @@ const QnA = ({ showModal, setShowModal }) => {
                   </div>
                 </ContentBox>
               ) : (
-                <Form name="nest-messages2" onFinish={updateQuestion}>
+                <Form id="edit-form" onFinish={updateQuestion}>
                   <Form.Item>
                     <Input name="title" value={title} onChange={handleChange} />
                   </Form.Item>
@@ -189,11 +191,7 @@ const QnA = ({ showModal, setShowModal }) => {
         </StyledCollapse>
       )}
 
-      <StyledPagination
-        onChange={handlePageChange}
-        // onChange={page => handlePageChange(page)}
-        total={totalResults}
-      />
+      <StyledPagination onChange={handlePageChange} total={totalResults} />
     </>
   );
 };
