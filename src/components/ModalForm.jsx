@@ -1,5 +1,5 @@
 import { Modal, Button } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import AddForm from './AddForm';
 
 const ModalForm = ({ form, visible, setVisible, addQuestion }) => {
