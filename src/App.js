@@ -1,26 +1,21 @@
-import React, { useState } from "react";
-import GlobalStyle, { Container } from "./globalStyles";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Navigation from "./components/Navigation";
-import Home from "./pages/Home";
-import QnA from "./pages/QnA";
-import Dimmer from "./components/Dimmer";
-// import ant css
+import React from 'react';
+import 'antd/dist/antd.css';
+import GlobalStyle, { Container } from './globalStyles';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import Home from './pages/Home';
+import QnA from './pages/QnA';
 
 function App() {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <div className="App">
       <Router>
         <GlobalStyle />
-        {/* Ant Modal을 사용하면 필요없음 */}
-        {showModal && <Dimmer setShowModal={setShowModal} />}
         <Container>
           <Navigation />
           <Switch>
             <Route path="/qna">
-              <QnA showModal={showModal} setShowModal={setShowModal} />
+              <QnA />
             </Route>
             <Route path="/" exact>
               <Home />
