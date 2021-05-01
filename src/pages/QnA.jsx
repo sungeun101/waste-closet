@@ -18,8 +18,9 @@ const QnA = () => {
 
   const [form] = Form.useForm();
 
-  const fetchQuestions = async (page) => {
-    console.log('fetched page: ' + page);
+  const fetchQuestions = async () => {
+    // console.log('fetched page : ' + page);
+    console.log('currentPageNumber : ' + currentPageNumber);
     setError(null);
     setLoading(true);
     try {
@@ -37,7 +38,7 @@ const QnA = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [currentPageNumber]);
 
   const showMessage = (text) => {
     message.success(text);
@@ -99,7 +100,6 @@ const QnA = () => {
 
       <PageBar
         setCurrentPageNumber={setCurrentPageNumber}
-        setQuestions={setQuestions}
         totalResults={totalResults}
       />
     </>
