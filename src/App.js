@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import QnA from './pages/QnA';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -12,15 +13,18 @@ function App() {
       <Router>
         <GlobalStyle />
         <Container>
-          <Navigation />
           <Switch>
-            <Route path="/qna">
-              <QnA />
-            </Route>
             <Route path="/" exact>
+              <Navigation />
               <Home />
             </Route>
-            {/* 404 페이지 추가하기: https://www.daleseo.com/react-router-basic/ */}
+            <Route path="/qna">
+              <Navigation />
+              <QnA />
+            </Route>
+            <Route>
+              <NotFound />
+            </Route>
           </Switch>
         </Container>
       </Router>

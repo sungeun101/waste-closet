@@ -19,15 +19,13 @@ const QnA = () => {
   const [form] = Form.useForm();
 
   const fetchQuestions = async () => {
-    // console.log('fetched page : ' + page);
-    console.log('currentPageNumber : ' + currentPageNumber);
     setError(null);
     setLoading(true);
     try {
       const response = await Service.getAll({
         params: { page: currentPageNumber },
       });
-      console.log(response);
+      // console.log(response);
       setQuestions(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {

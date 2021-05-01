@@ -66,7 +66,7 @@ const QuestionList = ({
   return (
     <StyledCollapse accordion onChange={() => setShowEdit(false)}>
       {questions.map((question) => (
-        <Panel header={question.title} extra={genExtra()}>
+        <Panel key={question.id} header={question.title} extra={genExtra()}>
           {!showEdit ? (
             <ContentBox>
               <Content>{question.body}</Content>

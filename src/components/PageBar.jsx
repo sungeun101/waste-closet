@@ -9,19 +9,9 @@ export const StyledPagination = styled(Pagination)`
   align-items: center;
 `;
 
+// 필요한 props보다 독립적인 컴포넌트로 만듦으로써 넘겨줘야 할 props가 더 많아져버리면 리팩토링하지 않는게 낫다는 신호
 const PageBar = ({ setCurrentPageNumber, totalResults }) => {
   const handlePageChange = (page) => {
-    // // 1. current page setting
-    // setCurrentPageNumber(page);
-    // // 2. api call
-    // // const response = await axios.get(baseURL, { params: { page: page } });
-    // const response = await Service.getAll({
-    //   params: { page: page },
-    // });
-    // console.log(response);
-    // // 3. questions setting
-    // setQuestions(response.data.results);
-
     setCurrentPageNumber(page);
   };
 
