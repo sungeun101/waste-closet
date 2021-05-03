@@ -9,6 +9,7 @@ const ModalForm = ({ form, visible, setVisible, addQuestion }) => {
 
   return (
     <Modal
+      onCancel={handleModalCancel}
       visible={visible}
       footer={[
         <Button key="back" onClick={handleModalCancel}>

@@ -45,6 +45,7 @@ const QnA = () => {
 
   const addQuestion = async (values) => {
     const { title, body } = values;
+    console.log(title, body);
     await Service.add({ title, body });
     showMessage('질문이 작성되었습니다');
   };
