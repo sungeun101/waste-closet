@@ -12,7 +12,6 @@ const Navigation = () => {
 
   const handleClick = (e) => {
     setCurrent(e.key);
-    console.log(e);
   };
 
   return (

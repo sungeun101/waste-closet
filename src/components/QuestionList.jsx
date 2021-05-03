@@ -4,9 +4,7 @@ import { Form, Input, Button, Popconfirm, Collapse } from 'antd';
 import { Service } from '../service/config.js';
 const { Panel } = Collapse;
 
-export const StyledCollapse = styled(Collapse)`
-  margin-top: 1rem;
-`;
+export const StyledCollapse = styled(Collapse)``;
 export const ContentBox = styled.div`
   display: flex;
   justify-content: space-between;

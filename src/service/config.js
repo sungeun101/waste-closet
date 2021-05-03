@@ -4,7 +4,8 @@ export const baseURL =
   'https://limitless-sierra-67996.herokuapp.com/v1/questions';
 
 const getAll = (params) => {
-  return axios.get(baseURL, params);
+  console.log(params);
+  return axios.get(baseURL + '?sortBy=createdAt%3Adesc', params);
 };
 
 const add = (data) => {

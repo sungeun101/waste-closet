@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Spin, message } from 'antd';
+import { Form, Button, Skeleton, message, Result } from 'antd';
 import SearchBar from '../components/SearchBar';
 import ModalForm from '../components/ModalForm';
 import PageBar from '../components/PageBar';
@@ -25,8 +25,8 @@ const QnA = () => {
       const response = await Service.getAll({
         params: { page: currentPageNumber },
       });
-      // console.log(response);
       setQuestions(response.data.results);
+      console.log(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
       setError(e);
@@ -65,7 +65,13 @@ const QnA = () => {
 
   return (
     <>
-      {error && <div>Something went wrong!</div>}
+      {error && (
+        <Result
+          status="500"
+          title="500"
+          subTitle="Sorry, something went wrong."
+        />
+      )}
 
       <SearchBar />
 
@@ -86,7 +92,10 @@ const QnA = () => {
       </BtnContainer>
 
       {loading ? (
-        <Spin />
+        <>
+          <Skeleton active />
+          <Skeleton active />
+        </>
       ) : (
         <QuestionList
           questions={questions}
