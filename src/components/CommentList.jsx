@@ -5,11 +5,11 @@ import { Service } from '../service/config';
 
 const CommentList = ({ comments, fetchComments }) => {
   const [showEdit, setShowEdit] = useState(false);
+  const [editId, setEditId] = useState('1');
   const [selectedComment, setSelectedComment] = useState({});
-  const { id, body } = selectedComment;
+  const { body } = selectedComment;
 
   const remove = async (id) => {
-    console.log(id);
     const res = await Service.getCommentbyId(id);
     const questionId = res.data.questionId;
     await Service.removeComment(id);
@@ -19,23 +19,24 @@ const CommentList = ({ comments, fetchComments }) => {
   const openEditForm = (comment) => {
     setSelectedComment(comment);
     setShowEdit(true);
+    setEditId(comment.id);
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
+    console.log(name);
     setSelectedComment({
       ...selectedComment,
       [name]: value,
     });
   };
 
-  const update = async (data) => {
-    console.log(data);
+  const update = async (id) => {
     await Service.updateComment(id, { body });
-    setShowEdit(false);
     const res = await Service.getCommentbyId(id);
     const questionId = res.data.questionId;
     await fetchComments(questionId);
+    setShowEdit(false);
   };
 
   return (
@@ -44,8 +45,8 @@ const CommentList = ({ comments, fetchComments }) => {
       header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
       itemLayout="horizontal"
       renderItem={(comment) => {
-        return showEdit ? (
-          <Form id="edit-form" onFinish={update}>
+        return editId === comment.id && showEdit ? (
+          <Form onFinish={() => update(comment.id)}>
             <Form.Item>
               <Input name="body" value={body} onChange={handleEditChange} />
             </Form.Item>
@@ -61,17 +62,15 @@ const CommentList = ({ comments, fetchComments }) => {
         ) : (
           <>
             <Comment author="admin" content={comment.body} />
-            <div>
-              <Button onClick={() => openEditForm(comment)}>수정</Button>
-              <Popconfirm
-                title="정말 삭제하시겠습니까?"
-                onConfirm={() => remove(comment.id)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button>삭제</Button>
-              </Popconfirm>
-            </div>
+            <Button onClick={() => openEditForm(comment)}>수정</Button>
+            <Popconfirm
+              title="정말 삭제하시겠습니까?"
+              onConfirm={() => remove(comment.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button>삭제</Button>
+            </Popconfirm>
           </>
         );
       }}

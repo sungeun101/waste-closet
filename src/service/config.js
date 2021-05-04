@@ -26,12 +26,10 @@ const addComment = (data) => {
 };
 
 const getCommentbyId = (id) => {
-  console.log(id);
   return axios.get(commentURL + '/' + id);
 };
 
 const getAllComments = (params) => {
-  console.log(params);
   return axios.get(commentURL, params);
 };
 

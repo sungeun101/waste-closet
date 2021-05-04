@@ -18,12 +18,7 @@ const StyledItem = styled(Form.Item)`
 const AddForm = ({ setVisible, form, addQuestion }) => {
   const handleSubmit = (values) => {
     addQuestion(values);
-    const { title, body } = values;
-    if (title === '' || body === '') {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
+    setVisible(false);
   };
 
   return (

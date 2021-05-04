@@ -3,7 +3,7 @@ import { Form, Button, Skeleton, message, Result } from 'antd';
 import SearchBar from '../components/SearchBar';
 import ModalForm from '../components/ModalForm';
 import PageBar from '../components/PageBar';
-import { StyledButton, BtnContainer } from './QnA.elements';
+import { StyledButton, BtnContainer, StyledConfirm } from './QnA.elements';
 import QuestionList from '../components/QuestionList';
 import { Service } from '../service/config';
 
@@ -11,7 +11,7 @@ const QnA = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [selectedQuestion, setSelectedQuestion] = useState({});
+
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
   const [visible, setVisible] = useState(false);
@@ -87,9 +87,14 @@ const QnA = () => {
           addQuestion={addQuestion}
         />
 
-        <StyledButton danger onClick={deleteAllQuestions}>
-          현재 페이지 삭제
-        </StyledButton>
+        <StyledConfirm
+          title="정말 삭제하시겠습니까?"
+          onConfirm={deleteAllQuestions}
+          okText="Yes"
+          cancelText="No"
+        >
+          <StyledButton danger>현재 페이지 삭제</StyledButton>
+        </StyledConfirm>
       </BtnContainer>
 
       {loading ? (
@@ -98,12 +103,7 @@ const QnA = () => {
           <Skeleton active />
         </>
       ) : (
-        <QuestionList
-          questions={questions}
-          selectedQuestion={selectedQuestion}
-          setSelectedQuestion={setSelectedQuestion}
-          showMessage={showMessage}
-        />
+        <QuestionList questions={questions} showMessage={showMessage} />
       )}
 
       <PageBar

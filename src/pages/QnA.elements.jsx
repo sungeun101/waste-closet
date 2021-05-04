@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 
 export const BtnContainer = styled.div`
   display: flex;
@@ -9,3 +9,4 @@ export const BtnContainer = styled.div`
 export const StyledButton = styled(Button)`
   margin-left: 0.5rem;
 `;
+export const StyledConfirm = styled(Popconfirm)``;

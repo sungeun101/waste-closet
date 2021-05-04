@@ -7,6 +7,7 @@ const { TextArea } = Input;
 const CommentForm = ({ questionId, comments, setComments }) => {
   const [submitting, setSubmitting] = useState(false);
   const [value, setValue] = useState('');
+  const [form] = Form.useForm();
 
   const handleSubmit = async (input) => {
     if (!value) {
@@ -24,7 +25,8 @@ const CommentForm = ({ questionId, comments, setComments }) => {
 
     setTimeout(() => {
       setSubmitting(false);
-      setValue(''); //안됨..
+      // setValue(''); //안됨..
+      form.resetFields();
       setComments([
         ...comments,
         {
@@ -39,7 +41,7 @@ const CommentForm = ({ questionId, comments, setComments }) => {
   };
 
   return (
-    <Form onFinish={handleSubmit}>
+    <Form form={form} onFinish={handleSubmit}>
       <Form.Item name="body">
         <TextArea rows={4} onChange={handleChange} value={value} />
       </Form.Item>

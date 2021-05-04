@@ -7,33 +7,29 @@ import CommentForm from './CommentForm.jsx';
 import CommentList from './CommentList.jsx';
 const { Panel } = Collapse;
 
-export const StyledCollapse = styled(Collapse)``;
-export const ContentContainer = styled.div`
+const StyledCollapse = styled(Collapse)``;
+const ContentContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding-left: 1.5rem;
 `;
-export const Content = styled.div`
+const Content = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
-export const StyledConfirm = styled(Popconfirm)`
+const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
 `;
-export const CommentContainer = styled.div`
+const CommentContainer = styled.div`
   margin: 2.5rem;
 `;
 
-const QuestionList = ({
-  questions,
-  selectedQuestion,
-  setSelectedQuestion,
-  showMessage,
-}) => {
+const QuestionList = ({ questions, showMessage }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
+  const [selectedQuestion, setSelectedQuestion] = useState({});
   const { id, title, body } = selectedQuestion;
 
   const handleChange = () => {
@@ -57,6 +53,7 @@ const QuestionList = ({
       ...selectedQuestion,
       [name]: value,
     });
+    console.log(selectedQuestion);
   };
 
   const updateQuestion = async () => {
@@ -85,7 +82,6 @@ const QuestionList = ({
   const fetchComments = async (questionId) => {
     const response = await Service.getAllComments({ params: { questionId } });
     setComments(response.data.results);
-    console.log(response.data.results);
   };
 
   return (
