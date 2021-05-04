@@ -43,8 +43,8 @@ const CommentList = ({ comments, fetchComments }) => {
       dataSource={comments}
       header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
       itemLayout="horizontal"
-      renderItem={(comment) => {
-        return showEdit ? (
+      // return 생략할 수 있어요
+      renderItem={(comment) => showEdit ? (
           <Form id="edit-form" onFinish={update}>
             <Form.Item>
               <Input name="body" value={body} onChange={handleEditChange} />
@@ -73,8 +73,8 @@ const CommentList = ({ comments, fetchComments }) => {
               </Popconfirm>
             </div>
           </>
-        );
-      }}
+        )
+      }
     />
   );
 };

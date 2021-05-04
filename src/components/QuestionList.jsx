@@ -60,8 +60,13 @@ const QuestionList = ({
   };
 
   const updateQuestion = async () => {
-    await Service.update(id, { title, body });
-    showMessage('수정되었습니다');
+    // 모든 API 호출에는 try/catch로 에러 핸들링을 해주세요
+    try {
+      await Service.update(id, { title, body });
+      showMessage('수정되었습니다');
+    } catch (err) {
+      console.log(err)
+    }
   };
 
   const genExtra = () => (
@@ -139,6 +144,7 @@ const QuestionList = ({
                 </ContentContainer>
 
                 {showComments && (
+                  // 독립적인 컴포넌트로 리팩토링하고 QnA처럼 모든 데이터를 컨테이너 컴포넌트에서 관리하면 수월해져요
                   <CommentContainer>
                     {comments.length > 0 && (
                       <CommentList
