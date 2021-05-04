@@ -25,7 +25,7 @@ const addComment = (data) => {
   return axios.post(commentURL, data);
 };
 
-const getCommentsbyId = (id) => {
+const getCommentbyId = (id) => {
   console.log(id);
   return axios.get(commentURL + '/' + id);
 };
@@ -35,12 +35,22 @@ const getAllComments = (params) => {
   return axios.get(commentURL, params);
 };
 
+const updateComment = (id, data) => {
+  return axios.patch(commentURL + '/' + id, data);
+};
+
+const removeComment = (id) => {
+  return axios.delete(commentURL + '/' + id);
+};
+
 export const Service = {
   getAll,
   add,
   update,
   remove,
   addComment,
-  getCommentsbyId,
+  getCommentbyId,
   getAllComments,
+  updateComment,
+  removeComment,
 };

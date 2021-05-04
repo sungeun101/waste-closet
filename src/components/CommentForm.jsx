@@ -24,7 +24,7 @@ const CommentForm = ({ questionId, comments, setComments }) => {
 
     setTimeout(() => {
       setSubmitting(false);
-      setValue('');
+      setValue(''); //안됨..
       setComments([
         ...comments,
         {

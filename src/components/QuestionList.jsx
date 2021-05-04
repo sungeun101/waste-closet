@@ -8,7 +8,7 @@ import CommentList from './CommentList.jsx';
 const { Panel } = Collapse;
 
 export const StyledCollapse = styled(Collapse)``;
-export const ContentBox = styled.div`
+export const ContentContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding-left: 1.5rem;
@@ -74,7 +74,7 @@ const QuestionList = ({
       />
       <span>답변 완료</span>
     </>
-    // 댓글이 없으면 댓글달기 아이콘 표시
+    // 댓글이 없으면
   );
 
   const handleCommentBtnClick = async (questionid) => {
@@ -84,7 +84,6 @@ const QuestionList = ({
 
   const fetchComments = async (questionId) => {
     const response = await Service.getAllComments({ params: { questionId } });
-    // const response = await Service.getCommentsbyId(questionId);
     setComments(response.data.results);
     console.log(response.data.results);
   };
@@ -94,42 +93,7 @@ const QuestionList = ({
       {questions.map((question) => (
         <>
           <Panel key={question.id} header={question.title} extra={genExtra()}>
-            {!showEdit ? (
-              <>
-                <ContentBox>
-                  <Content>{question.body}</Content>
-                  <div>
-                    <Button onClick={() => handleCommentBtnClick(question.id)}>
-                      답변보기
-                    </Button>
-                    <Button onClick={() => openEditForm(question)}>수정</Button>
-                    <StyledConfirm
-                      title="정말 삭제하시겠습니까?"
-                      onConfirm={() => deleteQuestion(question.id)}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button>삭제</Button>
-                    </StyledConfirm>
-                  </div>
-                </ContentBox>
-
-                {showComments && (
-                  <CommentContainer>
-                    {comments.length > 0 && <CommentList comments={comments} />}
-                    <Comment
-                      content={
-                        <CommentForm
-                          comments={comments}
-                          setComments={setComments}
-                          questionId={question.id}
-                        />
-                      }
-                    />
-                  </CommentContainer>
-                )}
-              </>
-            ) : (
+            {showEdit ? (
               <Form id="edit-form" onFinish={updateQuestion}>
                 <Form.Item>
                   <Input
@@ -154,6 +118,46 @@ const QuestionList = ({
                   </Button>
                 </Form.Item>
               </Form>
+            ) : (
+              <>
+                <ContentContainer>
+                  <Content>{question.body}</Content>
+                  <div>
+                    <Button onClick={() => handleCommentBtnClick(question.id)}>
+                      답변보기
+                    </Button>
+                    <Button onClick={() => openEditForm(question)}>수정</Button>
+                    <StyledConfirm
+                      title="정말 삭제하시겠습니까?"
+                      onConfirm={() => deleteQuestion(question.id)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <Button>삭제</Button>
+                    </StyledConfirm>
+                  </div>
+                </ContentContainer>
+
+                {showComments && (
+                  <CommentContainer>
+                    {comments.length > 0 && (
+                      <CommentList
+                        comments={comments}
+                        fetchComments={fetchComments}
+                      />
+                    )}
+                    <Comment
+                      content={
+                        <CommentForm
+                          comments={comments}
+                          setComments={setComments}
+                          questionId={question.id}
+                        />
+                      }
+                    />
+                  </CommentContainer>
+                )}
+              </>
             )}
           </Panel>
         </>
