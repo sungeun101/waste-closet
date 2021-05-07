@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Form, Button, Skeleton, message, Result } from 'antd';
 import SearchBar from '../components/SearchBar';
 import ModalForm from '../components/ModalForm';
-import PageBar from '../components/PageBar';
-import { StyledButton, BtnContainer, StyledConfirm } from './QnA.elements';
+import {
+  StyledButton,
+  BtnContainer,
+  StyledConfirm,
+  StyledPagination,
+} from './QnA.elements';
 import QuestionList from '../components/QuestionList';
 import { Service } from '../service/config';
 
@@ -11,11 +15,9 @@ const QnA = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [questions, setQuestions] = useState([]);
-
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
   const [visible, setVisible] = useState(false);
-
   const [form] = Form.useForm();
 
   const fetchQuestions = async () => {
@@ -26,7 +28,7 @@ const QnA = () => {
         params: { page: currentPageNumber },
       });
       setQuestions(response.data.results);
-      console.log(response.data.results);
+      // console.log(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
       setError(e);
@@ -64,6 +66,10 @@ const QnA = () => {
     setVisible(true);
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPageNumber(page);
+  };
+
   return (
     <>
       {error && (
@@ -73,9 +79,7 @@ const QnA = () => {
           subTitle="Sorry, something went wrong."
         />
       )}
-
       <SearchBar />
-
       <BtnContainer>
         <Button type="primary" onClick={showModal}>
           질문하기
@@ -86,7 +90,6 @@ const QnA = () => {
           setVisible={setVisible}
           addQuestion={addQuestion}
         />
-
         <StyledConfirm
           title="정말 삭제하시겠습니까?"
           onConfirm={deleteAllQuestions}
@@ -96,7 +99,6 @@ const QnA = () => {
           <StyledButton danger>현재 페이지 삭제</StyledButton>
         </StyledConfirm>
       </BtnContainer>
-
       {loading ? (
         <>
           <Skeleton active />
@@ -105,11 +107,7 @@ const QnA = () => {
       ) : (
         <QuestionList questions={questions} showMessage={showMessage} />
       )}
-
-      <PageBar
-        setCurrentPageNumber={setCurrentPageNumber}
-        totalResults={totalResults}
-      />
+      <StyledPagination onChange={handlePageChange} total={totalResults} />
     </>
   );
 };

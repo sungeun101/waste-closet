@@ -4,7 +4,7 @@ import { Form, Input, Button } from 'antd';
 import { Service } from '../service/config';
 const { TextArea } = Input;
 
-const CommentForm = ({ questionId, comments, setComments }) => {
+const CommentForm = ({ comments, setComments, questionId }) => {
   const [submitting, setSubmitting] = useState(false);
   const [value, setValue] = useState('');
   const [form] = Form.useForm();
@@ -13,7 +13,6 @@ const CommentForm = ({ questionId, comments, setComments }) => {
     if (!value) {
       return;
     }
-
     const { body } = input;
     const response = await Service.addComment({
       questionId,
@@ -25,7 +24,6 @@ const CommentForm = ({ questionId, comments, setComments }) => {
 
     setTimeout(() => {
       setSubmitting(false);
-      // setValue(''); //안됨..
       form.resetFields();
       setComments([
         ...comments,

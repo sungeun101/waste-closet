@@ -13,18 +13,17 @@ const CommentList = ({ comments, fetchComments }) => {
     const res = await Service.getCommentbyId(id);
     const questionId = res.data.questionId;
     await Service.removeComment(id);
-    await fetchComments(questionId);
+    fetchComments(questionId);
   };
 
   const openEditForm = (comment) => {
     setSelectedComment(comment);
-    setShowEdit(true);
     setEditId(comment.id);
+    setShowEdit(true);
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    console.log(name);
     setSelectedComment({
       ...selectedComment,
       [name]: value,
@@ -35,7 +34,7 @@ const CommentList = ({ comments, fetchComments }) => {
     await Service.updateComment(id, { body });
     const res = await Service.getCommentbyId(id);
     const questionId = res.data.questionId;
-    await fetchComments(questionId);
+    fetchComments(questionId);
     setShowEdit(false);
   };
 

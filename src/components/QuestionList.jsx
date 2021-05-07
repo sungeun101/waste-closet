@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Form, Input, Button, Popconfirm, Collapse, Comment } from 'antd';
+import { Form, Input, Button, Popconfirm, Collapse } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { Service } from '../service/config.js';
-import CommentForm from './CommentForm.jsx';
-import CommentList from './CommentList.jsx';
+import Comments from './Comments.jsx';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -21,21 +20,12 @@ const Content = styled.div`
 const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
 `;
-const CommentContainer = styled.div`
-  margin: 2.5rem;
-`;
 
 const QuestionList = ({ questions, showMessage }) => {
   const [showEdit, setShowEdit] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const { id, title, body } = selectedQuestion;
-
-  const handleChange = () => {
-    setShowEdit(false);
-    setShowComments(false);
-  };
+  const [questionId, setQuestionId] = useState('');
 
   const deleteQuestion = async (id) => {
     await Service.remove(id);
@@ -53,7 +43,6 @@ const QuestionList = ({ questions, showMessage }) => {
       ...selectedQuestion,
       [name]: value,
     });
-    console.log(selectedQuestion);
   };
 
   const updateQuestion = async () => {
@@ -74,14 +63,9 @@ const QuestionList = ({ questions, showMessage }) => {
     // 댓글이 없으면
   );
 
-  const handleCommentBtnClick = async (questionid) => {
-    await fetchComments(questionid);
-    setShowComments(true);
-  };
-
-  const fetchComments = async (questionId) => {
-    const response = await Service.getAllComments({ params: { questionId } });
-    setComments(response.data.results);
+  const handleChange = (key) => {
+    setShowEdit(false);
+    setQuestionId(key);
   };
 
   return (
@@ -119,9 +103,6 @@ const QuestionList = ({ questions, showMessage }) => {
                 <ContentContainer>
                   <Content>{question.body}</Content>
                   <div>
-                    <Button onClick={() => handleCommentBtnClick(question.id)}>
-                      답변보기
-                    </Button>
                     <Button onClick={() => openEditForm(question)}>수정</Button>
                     <StyledConfirm
                       title="정말 삭제하시겠습니까?"
@@ -134,25 +115,7 @@ const QuestionList = ({ questions, showMessage }) => {
                   </div>
                 </ContentContainer>
 
-                {showComments && (
-                  <CommentContainer>
-                    {comments.length > 0 && (
-                      <CommentList
-                        comments={comments}
-                        fetchComments={fetchComments}
-                      />
-                    )}
-                    <Comment
-                      content={
-                        <CommentForm
-                          comments={comments}
-                          setComments={setComments}
-                          questionId={question.id}
-                        />
-                      }
-                    />
-                  </CommentContainer>
-                )}
+                <Comments questionId={questionId} />
               </>
             )}
           </Panel>
