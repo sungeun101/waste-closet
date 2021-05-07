@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Form, Input, Button, Popconfirm, Collapse } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
-import { Service } from '../service/config.js';
+import { QuestionService } from '../service/config.js';
 import Comments from './Comments.jsx';
 const { Panel } = Collapse;
 
@@ -28,7 +28,7 @@ const QuestionList = ({ questions, showMessage }) => {
   const [questionId, setQuestionId] = useState('');
 
   const deleteQuestion = async (id) => {
-    await Service.remove(id);
+    await QuestionService.remove(id);
     showMessage('삭제되었습니다');
   };
 
@@ -46,7 +46,7 @@ const QuestionList = ({ questions, showMessage }) => {
   };
 
   const updateQuestion = async () => {
-    await Service.update(id, { title, body });
+    await QuestionService.update(id, { title, body });
     showMessage('수정되었습니다');
   };
 

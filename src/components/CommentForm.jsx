@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Form, Input, Button } from 'antd';
-import { Service } from '../service/config';
+import { CommentService } from '../service/comment.js';
 const { TextArea } = Input;
 
 const CommentForm = ({ comments, setComments, questionId }) => {
@@ -14,7 +14,7 @@ const CommentForm = ({ comments, setComments, questionId }) => {
       return;
     }
     const { body } = input;
-    const response = await Service.addComment({
+    const response = await CommentService.add({
       questionId,
       body,
     });

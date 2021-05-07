@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Comment, List, Popconfirm, Button, Form, Input } from 'antd';
-import { Service } from '../service/config';
+import { CommentService } from '../service/comment.js';
 
 const CommentList = ({ comments, fetchComments }) => {
   const [showEdit, setShowEdit] = useState(false);
@@ -10,9 +10,9 @@ const CommentList = ({ comments, fetchComments }) => {
   const { body } = selectedComment;
 
   const remove = async (id) => {
-    const res = await Service.getCommentbyId(id);
+    const res = await CommentService.getbyId(id);
     const questionId = res.data.questionId;
-    await Service.removeComment(id);
+    await CommentService.remove(id);
     fetchComments(questionId);
   };
 
@@ -31,8 +31,8 @@ const CommentList = ({ comments, fetchComments }) => {
   };
 
   const update = async (id) => {
-    await Service.updateComment(id, { body });
-    const res = await Service.getCommentbyId(id);
+    await CommentService.update(id, { body });
+    const res = await CommentService.getbyId(id);
     const questionId = res.data.questionId;
     fetchComments(questionId);
     setShowEdit(false);

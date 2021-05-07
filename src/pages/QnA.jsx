@@ -9,7 +9,7 @@ import {
   StyledPagination,
 } from './QnA.elements';
 import QuestionList from '../components/QuestionList';
-import { Service } from '../service/config';
+import { QuestionService } from '../service/config';
 
 const QnA = () => {
   const [loading, setLoading] = useState(false);
@@ -24,11 +24,11 @@ const QnA = () => {
     setError(null);
     setLoading(true);
     try {
-      const response = await Service.getAll({
-        params: { page: currentPageNumber },
+      const response = await QuestionService.getAll({
+        params: { page: currentPageNumber, sortBy: 'createdAt:desc' },
       });
+      console.log(response);
       setQuestions(response.data.results);
-      // console.log(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
       setError(e);
@@ -47,15 +47,15 @@ const QnA = () => {
 
   const addQuestion = async (values) => {
     const { title, body } = values;
-    console.log(title, body);
-    await Service.add({ title, body });
+    // console.log(title, body);
+    await QuestionService.add({ title, body });
     showMessage('질문이 작성되었습니다');
   };
 
   const deleteAllQuestions = async () => {
     setLoading(true);
     for await (const question of questions) {
-      await Service.remove(question.id);
+      await QuestionService.remove(question.id);
     }
     setLoading(false);
     showMessage('삭제되었습니다');

@@ -1,8 +1,11 @@
 import axios from 'axios';
+import { baseURL } from './config';
 
-export const baseURL = 'https://limitless-sierra-67996.herokuapp.com/v1';
+const endpoint = '/answers';
 
-const endpoint = '/questions';
+const getbyId = (id) => {
+  return axios.get(baseURL + endpoint + '/' + id);
+};
 
 const getAll = (params) => {
   return axios.get(baseURL + endpoint, params);
@@ -20,7 +23,8 @@ const remove = (id) => {
   return axios.delete(baseURL + endpoint + '/' + id);
 };
 
-export const QuestionService = {
+export const CommentService = {
+  getbyId,
   getAll,
   add,
   update,

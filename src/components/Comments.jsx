@@ -3,19 +3,21 @@ import styled from 'styled-components';
 import { Comment } from 'antd';
 import CommentForm from './CommentForm.jsx';
 import CommentList from './CommentList.jsx';
-import { Service } from '../service/config.js';
+import { CommentService } from '../service/comment.js';
 
 const CommentContainer = styled.div`
   margin: 2.5rem;
 `;
 
-const Comments = (questionId) => {
-  console.log(questionId);
+const Comments = ({ questionId }) => {
+  // console.log(questionId);
   const [comments, setComments] = useState([]);
 
   const fetchComments = async (questionId) => {
-    const response = await Service.getAllComments({ params: { questionId } });
-    // console.log(response.data.results);
+    const response = await CommentService.getAll({
+      params: { questionId },
+    });
+    console.log(response);
     setComments(response.data.results);
   };
 
