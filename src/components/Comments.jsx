@@ -1,42 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Comment } from 'antd';
+import { Comment, message } from 'antd';
 import CommentForm from './CommentForm.jsx';
 import CommentList from './CommentList.jsx';
-import { CommentService } from '../service/comment.js';
+import { commentService } from '../service/commentAPI.js';
+import { showErrorMsg } from '../service/messages.js';
 
 const CommentContainer = styled.div`
   margin: 2.5rem;
 `;
 
 const Comments = ({ questionId }) => {
-  // console.log(questionId);
+  // console.log('Comments');
   const [comments, setComments] = useState([]);
 
   const fetchComments = async (questionId) => {
-    const response = await CommentService.getAll({
-      params: { questionId },
-    });
-    console.log(response);
-    setComments(response.data.results);
+    try {
+      const response = await commentService.getAll({
+        params: { questionId },
+      });
+      console.log(response);
+      setComments(response.data.results);
+    } catch (e) {
+      showErrorMsg();
+    }
   };
 
   useEffect(() => {
     fetchComments(questionId);
   }, []);
 
+  const showMessage = (text) => {
+    const key = 'updatable';
+    message.loading({ content: 'Loading...', key });
+    setTimeout(() => {
+      message.success({ content: text, key, duration: 2 });
+      fetchComments(questionId);
+    }, 1000);
+  };
+
   return (
     <CommentContainer>
       {comments.length > 0 && (
-        <CommentList comments={comments} fetchComments={fetchComments} />
+        <CommentList comments={comments} showMessage={showMessage} />
       )}
       <Comment
         content={
-          <CommentForm
-            comments={comments}
-            setComments={setComments}
-            questionId={questionId}
-          />
+          <CommentForm questionId={questionId} showMessage={showMessage} />
         }
       />
     </CommentContainer>

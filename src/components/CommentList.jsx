@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 import { Comment, List, Popconfirm, Button, Form, Input } from 'antd';
-import { CommentService } from '../service/comment.js';
+import { commentService } from '../service/commentAPI.js';
+import { showErrorMsg } from '../service/messages.js';
 
-const CommentList = ({ comments, fetchComments }) => {
+const CommentList = ({ comments, showMessage }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editId, setEditId] = useState('1');
   const [selectedComment, setSelectedComment] = useState({});
   const { body } = selectedComment;
 
   const remove = async (id) => {
-    const res = await CommentService.getbyId(id);
-    const questionId = res.data.questionId;
-    await CommentService.remove(id);
-    fetchComments(questionId);
+    try {
+      await commentService.remove(id);
+    } catch (e) {
+      showErrorMsg();
+    }
+    showMessage('삭제되었습니다.');
   };
 
   const openEditForm = (comment) => {
@@ -31,11 +34,13 @@ const CommentList = ({ comments, fetchComments }) => {
   };
 
   const update = async (id) => {
-    await CommentService.update(id, { body });
-    const res = await CommentService.getbyId(id);
-    const questionId = res.data.questionId;
-    fetchComments(questionId);
-    setShowEdit(false);
+    try {
+      await commentService.update(id, { body });
+      setShowEdit(false);
+    } catch (e) {
+      showErrorMsg();
+    }
+    showMessage('수정되었습니다.');
   };
 
   return (
@@ -44,7 +49,7 @@ const CommentList = ({ comments, fetchComments }) => {
       header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
       itemLayout="horizontal"
       renderItem={(comment) => {
-        return editId === comment.id && showEdit ? (
+        editId === comment.id && showEdit ? (
           <Form onFinish={() => update(comment.id)}>
             <Form.Item>
               <Input name="body" value={body} onChange={handleEditChange} />

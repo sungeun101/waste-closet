@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Input } from 'antd';
 import styled from 'styled-components';
+import SelectBar from './SelectBar';
 
 const StyledForm = styled(Form)`
   height: 100%;
@@ -16,36 +17,46 @@ const StyledItem = styled(Form.Item)`
 `;
 
 const AddForm = ({ setVisible, form, addQuestion }) => {
+  const [category, setCategory] = useState('');
+
   const handleSubmit = (values) => {
-    addQuestion(values);
+    const { title, body } = values;
+    addQuestion({ category, title, body });
     setVisible(false);
   };
 
+  const getOptionValue = (value) => {
+    setCategory(value);
+  };
+
   return (
-    <StyledForm form={form} id="add-form" onFinish={handleSubmit}>
-      <StyledItem
-        name="title"
-        rules={[
-          {
-            required: true,
-            message: '제목을 입력해주세요.',
-          },
-        ]}
-      >
-        <Input placeholder="제목" />
-      </StyledItem>
-      <StyledItem
-        name="body"
-        rules={[
-          {
-            required: true,
-            message: '내용을 입력해주세요.',
-          },
-        ]}
-      >
-        <Input.TextArea rows={4} placeholder="내용" />
-      </StyledItem>
-    </StyledForm>
+    <>
+      <StyledForm form={form} id="add-form" onFinish={handleSubmit}>
+        <SelectBar sendOptionValue={getOptionValue} />
+        <StyledItem
+          name="title"
+          rules={[
+            {
+              required: true,
+              message: '제목을 입력해주세요.',
+            },
+          ]}
+        >
+          <Input placeholder="제목" />
+        </StyledItem>
+        <StyledItem
+          name="body"
+          rules={[
+            {
+              required: true,
+              message: '내용을 입력해주세요.',
+            },
+          ]}
+        >
+          <Input.TextArea rows={4} placeholder="내용" />
+        </StyledItem>
+      </StyledForm>
+    </>
   );
 };
 

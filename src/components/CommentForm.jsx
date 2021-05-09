@@ -1,37 +1,26 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 import { Form, Input, Button } from 'antd';
-import { CommentService } from '../service/comment.js';
+import { commentService } from '../service/commentAPI.js';
+import { showErrorMsg } from '../service/messages.js';
 const { TextArea } = Input;
 
-const CommentForm = ({ comments, setComments, questionId }) => {
-  const [submitting, setSubmitting] = useState(false);
+const CommentForm = ({ questionId, showMessage }) => {
   const [value, setValue] = useState('');
   const [form] = Form.useForm();
 
   const handleSubmit = async (input) => {
-    if (!value) {
-      return;
-    }
     const { body } = input;
-    const response = await CommentService.add({
-      questionId,
-      body,
-    });
-    const newBody = response.data.body;
-
-    setSubmitting(true);
-
-    setTimeout(() => {
-      setSubmitting(false);
-      form.resetFields();
-      setComments([
-        ...comments,
-        {
-          body: newBody,
-        },
-      ]);
-    }, 1000);
+    try {
+      await commentService.add({
+        questionId,
+        body,
+      });
+    } catch (e) {
+      showErrorMsg();
+    }
+    showMessage('작성되었습니다.');
+    form.resetFields();
   };
 
   const handleChange = (e) => {
@@ -40,11 +29,19 @@ const CommentForm = ({ comments, setComments, questionId }) => {
 
   return (
     <Form form={form} onFinish={handleSubmit}>
-      <Form.Item name="body">
+      <Form.Item
+        name="body"
+        rules={[
+          {
+            required: true,
+            message: '내용을 입력해주세요.',
+          },
+        ]}
+      >
         <TextArea rows={4} onChange={handleChange} value={value} />
       </Form.Item>
       <Form.Item>
-        <Button htmlType="submit" loading={submitting} type="primary">
+        <Button htmlType="submit" type="primary">
           Add Comment
         </Button>
       </Form.Item>

@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { Select, Input, Tag } from 'antd';
+import { Input, Tag } from 'antd';
 import styled from 'styled-components';
+import { Select } from 'antd';
 
 const { Search } = Input;
-const { Option } = Select;
 
 const Wrapper = styled.div`
   margin-bottom: 1.5rem;
@@ -27,6 +27,16 @@ const StyledTag = styled(Tag)`
     cursor: pointer;
   }
 `;
+const options = [
+  { value: '종이/종이팩' },
+  { value: '고철' },
+  { value: '금속캔' },
+  { value: '비닐' },
+  { value: '플라스틱' },
+  { value: '스티로폼' },
+  { value: '불연성종량제' },
+  { value: '일반쓰레기' },
+];
 
 const SearchBar = () => {
   const inputRef = useRef(null);
@@ -36,10 +46,6 @@ const SearchBar = () => {
     inputRef.current.focus({
       cursor: 'all',
     });
-  };
-
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
   };
 
   return (
@@ -53,21 +59,11 @@ const SearchBar = () => {
           onSearch={handleSearch}
           ref={inputRef}
         />
-
         <StyledSelect
-          defaultValue="#분류별 검색"
-          onChange={handleChange}
+          defaultValue="# 카테고리"
+          options={options}
           size="large"
-        >
-          <Option value="종이/종이팩">종이/종이팩</Option>
-          <Option value="고철">고철</Option>
-          <Option value="금속캔">금속캔</Option>
-          <Option value="비닐">비닐</Option>
-          <Option value="플라스틱">플라스틱</Option>
-          <Option value="스티로폼">스티로폼</Option>
-          <Option value="불연성종량제">불연성종량제</Option>
-          <Option value="일반쓰레기">일반쓰레기</Option>
-        </StyledSelect>
+        />
       </SearchContainer>
 
       <TagContainer>

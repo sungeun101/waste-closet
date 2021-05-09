@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Form, Input, Button, Popconfirm, Collapse } from 'antd';
+import { Button, Popconfirm, Collapse, Spin, Tag } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
-import { QuestionService } from '../service/config.js';
 import Comments from './Comments.jsx';
+import EditForm from './EditForm.jsx';
+import { showErrorMsg } from '../service/messages.js';
+import { commentService } from '../service/commentAPI.js';
+import { questionService } from '../service/config.js';
+
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -22,13 +26,56 @@ const StyledConfirm = styled(Popconfirm)`
 `;
 
 const QuestionList = ({ questions, showMessage }) => {
+  // console.log('QuestionList');
+  const [loading, setLoading] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
-  const { id, title, body } = selectedQuestion;
   const [questionId, setQuestionId] = useState('');
+  const [comments, setComments] = useState([]);
+
+  const fetchComments = async () => {
+    setLoading(true);
+    try {
+      const response = await commentService.getAll({ params: { limit: 100 } });
+      // console.log(response);
+      setComments(response.data.results);
+    } catch (e) {
+      showErrorMsg();
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const checkIfReplied = (id) => {
+    // console.log(id);
+    const idArr = comments.map((comment) => comment.questionId);
+    const set = new Set(idArr);
+    const uniqueArr = [...set];
+    // console.log(uniqueArr);
+    if (uniqueArr.includes(id)) {
+      return (
+        <>
+          <CheckCircleTwoTone
+            twoToneColor="#52c41a"
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          />
+          <span>답변완료</span>
+        </>
+      );
+    }
+  };
 
   const deleteQuestion = async (id) => {
-    await QuestionService.remove(id);
+    try {
+      await questionService.remove(id);
+    } catch (e) {
+      showErrorMsg();
+    }
     showMessage('삭제되었습니다');
   };
 
@@ -37,67 +84,39 @@ const QuestionList = ({ questions, showMessage }) => {
     setShowEdit(true);
   };
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedQuestion({
-      ...selectedQuestion,
-      [name]: value,
-    });
-  };
-
-  const updateQuestion = async () => {
-    await QuestionService.update(id, { title, body });
-    showMessage('수정되었습니다');
-  };
-
-  const genExtra = () => (
-    <>
-      <CheckCircleTwoTone
-        twoToneColor="#52c41a"
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
-      />
-      <span>답변 완료</span>
-    </>
-    // 댓글이 없으면
-  );
-
-  const handleChange = (key) => {
+  const handlePanelChange = (key) => {
     setShowEdit(false);
     setQuestionId(key);
   };
 
+  const showHeader = (question) => {
+    const { category, title } = question;
+    return (
+      <>
+        {category && <Tag color="#87d068">{category}</Tag>}
+        <span>{title}</span>
+      </>
+    );
+  };
+
   return (
-    <StyledCollapse accordion onChange={handleChange}>
+    <StyledCollapse accordion onChange={handlePanelChange}>
       {questions.map((question) => (
         <>
-          <Panel key={question.id} header={question.title} extra={genExtra()}>
+          <Panel
+            key={question.id}
+            header={showHeader(question)}
+            extra={checkIfReplied(question.id)}
+          >
             {showEdit ? (
-              <Form id="edit-form" onFinish={updateQuestion}>
-                <Form.Item>
-                  <Input
-                    name="title"
-                    value={title}
-                    onChange={handleEditChange}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Input.TextArea
-                    name="body"
-                    value={body}
-                    onChange={handleEditChange}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Button type="default" htmlType="submit">
-                    수정하기
-                  </Button>
-                  <Button type="default" onClick={() => setShowEdit(false)}>
-                    취소
-                  </Button>
-                </Form.Item>
-              </Form>
+              <EditForm
+                selectedQuestion={selectedQuestion}
+                setSelectedQuestion={setSelectedQuestion}
+                showMessage={showMessage}
+                setShowEdit={setShowEdit}
+              />
+            ) : loading ? (
+              <Spin />
             ) : (
               <>
                 <ContentContainer>
@@ -115,7 +134,7 @@ const QuestionList = ({ questions, showMessage }) => {
                   </div>
                 </ContentContainer>
 
-                <Comments questionId={questionId} />
+                <Comments comments={comments} questionId={questionId} />
               </>
             )}
           </Panel>

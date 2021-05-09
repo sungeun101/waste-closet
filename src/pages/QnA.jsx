@@ -9,7 +9,8 @@ import {
   StyledPagination,
 } from './QnA.elements';
 import QuestionList from '../components/QuestionList';
-import { QuestionService } from '../service/config';
+import { questionService } from '../service/config';
+import { showErrorMsg } from '../service/messages';
 
 const QnA = () => {
   const [loading, setLoading] = useState(false);
@@ -24,10 +25,10 @@ const QnA = () => {
     setError(null);
     setLoading(true);
     try {
-      const response = await QuestionService.getAll({
+      const response = await questionService.getAll({
         params: { page: currentPageNumber, sortBy: 'createdAt:desc' },
       });
-      console.log(response);
+      // console.log(response);
       setQuestions(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
@@ -41,21 +42,31 @@ const QnA = () => {
   }, [currentPageNumber]);
 
   const showMessage = (text) => {
-    message.success(text);
-    fetchQuestions();
+    const key = 'updatable';
+    message.loading({ content: 'Loading...', key });
+    setTimeout(() => {
+      message.success({ content: text, key, duration: 2 });
+      fetchQuestions();
+    }, 1000);
   };
 
   const addQuestion = async (values) => {
-    const { title, body } = values;
-    // console.log(title, body);
-    await QuestionService.add({ title, body });
+    try {
+      await questionService.add(values);
+    } catch (e) {
+      showErrorMsg();
+    }
     showMessage('질문이 작성되었습니다');
   };
 
   const deleteAllQuestions = async () => {
     setLoading(true);
-    for await (const question of questions) {
-      await QuestionService.remove(question.id);
+    try {
+      for await (const question of questions) {
+        await questionService.remove(question.id);
+      }
+    } catch (e) {
+      showErrorMsg();
     }
     setLoading(false);
     showMessage('삭제되었습니다');
@@ -67,6 +78,7 @@ const QnA = () => {
   };
 
   const handlePageChange = (page) => {
+    console.log(page);
     setCurrentPageNumber(page);
   };
 

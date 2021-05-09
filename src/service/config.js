@@ -20,7 +20,7 @@ const remove = (id) => {
   return axios.delete(baseURL + endpoint + '/' + id);
 };
 
-export const QuestionService = {
+export const questionService = {
   getAll,
   add,
   update,
