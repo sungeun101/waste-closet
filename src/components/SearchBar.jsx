@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
-
 const { Search } = Input;
 
 const Wrapper = styled.div`
@@ -38,7 +37,7 @@ const options = [
   { value: '일반쓰레기' },
 ];
 
-const SearchBar = () => {
+const SearchBar = ({ handleSearchByCategory }) => {
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
@@ -46,6 +45,10 @@ const SearchBar = () => {
     inputRef.current.focus({
       cursor: 'all',
     });
+  };
+
+  const handleChange = (value) => {
+    handleSearchByCategory(value);
   };
 
   return (
@@ -63,6 +66,7 @@ const SearchBar = () => {
           defaultValue="# 카테고리"
           options={options}
           size="large"
+          onChange={handleChange}
         />
       </SearchContainer>
 

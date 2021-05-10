@@ -89,7 +89,7 @@ const QuestionList = ({ questions, showMessage }) => {
     setQuestionId(key);
   };
 
-  const showHeader = (question) => {
+  const showPanelHeader = (question) => {
     const { category, title } = question;
     return (
       <>
@@ -105,7 +105,7 @@ const QuestionList = ({ questions, showMessage }) => {
         <>
           <Panel
             key={question.id}
-            header={showHeader(question)}
+            header={showPanelHeader(question)}
             extra={checkIfReplied(question.id)}
           >
             {showEdit ? (

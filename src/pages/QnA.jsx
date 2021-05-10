@@ -82,6 +82,26 @@ const QnA = () => {
     setCurrentPageNumber(page);
   };
 
+  const handleSearchByCategory = async (value) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await questionService.getAll({
+        params: { category: value },
+      });
+      const questions = response.data.results;
+      if (questions.length > 0) {
+        const searchResult = questions.filter(
+          (question) => question.category === value
+        );
+        setQuestions(searchResult);
+      }
+    } catch (e) {
+      setError(e);
+    }
+    setLoading(false);
+  };
+
   return (
     <>
       {error && (
@@ -91,7 +111,7 @@ const QnA = () => {
           subTitle="Sorry, something went wrong."
         />
       )}
-      <SearchBar />
+      <SearchBar handleSearchByCategory={handleSearchByCategory} />
       <BtnContainer>
         <Button type="primary" onClick={showModal}>
           질문하기
