@@ -11,6 +11,11 @@ import {
 import QuestionList from '../components/QuestionList';
 import { questionService } from '../service/config';
 import { showErrorMsg } from '../service/messages';
+import {
+  DeleteOutlined,
+  ReloadOutlined,
+  EditOutlined,
+} from '@ant-design/icons';
 
 const QnA = () => {
   const [loading, setLoading] = useState(false);
@@ -19,6 +24,7 @@ const QnA = () => {
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
   const [visible, setVisible] = useState(false);
+  const [selected, setSelected] = useState('# 카테고리');
   const [form] = Form.useForm();
 
   const fetchQuestions = async () => {
@@ -95,11 +101,18 @@ const QnA = () => {
           (question) => question.category === value
         );
         setQuestions(searchResult);
+      } else {
+        setQuestions([]);
       }
     } catch (e) {
       setError(e);
     }
     setLoading(false);
+  };
+
+  const handleReload = () => {
+    fetchQuestions();
+    setSelected('# 카테고리');
   };
 
   return (
@@ -111,9 +124,14 @@ const QnA = () => {
           subTitle="Sorry, something went wrong."
         />
       )}
-      <SearchBar handleSearchByCategory={handleSearchByCategory} />
+      <SearchBar
+        handleSearchByCategory={handleSearchByCategory}
+        setSelected={setSelected}
+        selected={selected}
+      />
       <BtnContainer>
         <Button type="primary" onClick={showModal}>
+          <EditOutlined />
           질문하기
         </Button>
         <ModalForm
@@ -122,22 +140,32 @@ const QnA = () => {
           setVisible={setVisible}
           addQuestion={addQuestion}
         />
-        <StyledConfirm
-          title="정말 삭제하시겠습니까?"
-          onConfirm={deleteAllQuestions}
-          okText="Yes"
-          cancelText="No"
-        >
-          <StyledButton danger>현재 페이지 삭제</StyledButton>
-        </StyledConfirm>
+        <div>
+          <Button onClick={handleReload}>
+            <ReloadOutlined />
+          </Button>
+          <StyledConfirm
+            title="정말 삭제하시겠습니까?"
+            onConfirm={deleteAllQuestions}
+            okText="Yes"
+            cancelText="No"
+          >
+            <StyledButton danger>
+              <DeleteOutlined />
+              페이지 삭제
+            </StyledButton>
+          </StyledConfirm>
+        </div>
       </BtnContainer>
       {loading ? (
         <>
           <Skeleton active />
           <Skeleton active />
         </>
-      ) : (
+      ) : questions.length > 0 ? (
         <QuestionList questions={questions} showMessage={showMessage} />
+      ) : (
+        <div>검색 결과가 없습니다.</div>
       )}
       <StyledPagination onChange={handlePageChange} total={totalResults} />
     </>

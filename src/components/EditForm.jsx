@@ -11,8 +11,9 @@ const EditForm = ({
   showMessage,
   setShowEdit,
 }) => {
-  const { id, title, body } = selectedQuestion;
   const [category, setCategory] = useState('');
+  const { id, title, body } = selectedQuestion;
+
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setSelectedQuestion({
@@ -30,13 +31,13 @@ const EditForm = ({
     showMessage('수정되었습니다');
   };
 
-  const getOptionValue = (value) => {
+  const getSelectedOption = (value) => {
     setCategory(value);
   };
 
   return (
     <Form id="edit-form" onFinish={updateQuestion}>
-      <SelectBar sendOptionValue={getOptionValue} />
+      <SelectBar selectedOption={getSelectedOption} />
       <Form.Item>
         <Input name="title" value={title} onChange={handleEditChange} />
       </Form.Item>

@@ -25,14 +25,14 @@ const AddForm = ({ setVisible, form, addQuestion }) => {
     setVisible(false);
   };
 
-  const getOptionValue = (value) => {
+  const getSelectedOption = (value) => {
     setCategory(value);
   };
 
   return (
     <>
       <StyledForm form={form} id="add-form" onFinish={handleSubmit}>
-        <SelectBar sendOptionValue={getOptionValue} />
+        <SelectBar selectedOption={getSelectedOption} />
         <StyledItem
           name="title"
           rules={[

@@ -14,7 +14,7 @@ const Comments = ({ questionId }) => {
   // console.log('Comments');
   const [comments, setComments] = useState([]);
 
-  const fetchComments = async (questionId) => {
+  const fetchCommentsByQid = async (questionId) => {
     try {
       const response = await commentService.getAll({
         params: { questionId },
@@ -27,7 +27,7 @@ const Comments = ({ questionId }) => {
   };
 
   useEffect(() => {
-    fetchComments(questionId);
+    fetchCommentsByQid(questionId);
   }, []);
 
   const showMessage = (text) => {
@@ -35,7 +35,7 @@ const Comments = ({ questionId }) => {
     message.loading({ content: 'Loading...', key });
     setTimeout(() => {
       message.success({ content: text, key, duration: 2 });
-      fetchComments(questionId);
+      fetchCommentsByQid(questionId);
     }, 1000);
   };
 

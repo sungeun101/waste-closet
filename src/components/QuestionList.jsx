@@ -33,7 +33,7 @@ const QuestionList = ({ questions, showMessage }) => {
   const [questionId, setQuestionId] = useState('');
   const [comments, setComments] = useState([]);
 
-  const fetchComments = async () => {
+  const fetchAllComments = async () => {
     setLoading(true);
     try {
       const response = await commentService.getAll({ params: { limit: 100 } });
@@ -46,7 +46,7 @@ const QuestionList = ({ questions, showMessage }) => {
   };
 
   useEffect(() => {
-    fetchComments();
+    fetchAllComments();
   }, []);
 
   const checkIfReplied = (id) => {

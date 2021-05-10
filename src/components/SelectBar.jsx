@@ -1,5 +1,16 @@
-import React from 'react';
-import { Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Select } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  display: flex;
+  margin-bottom: 1.5rem;
+`;
+const StyledSelect = styled(Select)`
+  width: 100%;
+  margin-right: 1rem;
+`;
 
 const options = [
   { value: '종이/종이팩' },
@@ -12,17 +23,33 @@ const options = [
   { value: '일반쓰레기' },
 ];
 
-const SelectBar = ({ sendOptionValue }) => {
+const SelectBar = ({ selectedOption }) => {
+  const [selected, setSelected] = useState('# 카테고리');
+
+  useEffect(() => {
+    setSelected('# 카테고리');
+  }, []);
+
   const handleChange = (value) => {
-    sendOptionValue(value);
+    selectedOption(value);
+    setSelected(value);
+  };
+
+  const clearSelect = () => {
+    setSelected('# 카테고리');
   };
 
   return (
-    <Select
-      defaultValue="# 카테고리"
-      onChange={handleChange}
-      options={options}
-    />
+    <Wrapper>
+      <StyledSelect
+        value={selected}
+        onChange={handleChange}
+        options={options}
+      />
+      <Button onClick={clearSelect}>
+        <ReloadOutlined />
+      </Button>
+    </Wrapper>
   );
 };
 
