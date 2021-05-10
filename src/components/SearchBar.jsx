@@ -37,18 +37,23 @@ const options = [
   { value: '일반쓰레기' },
 ];
 
-const SearchBar = ({ handleSearchByCategory, setSelected, selected }) => {
+const SearchBar = ({
+  searchByCategory,
+  searchByName,
+  setSelected,
+  selected,
+}) => {
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
-    console.log(value);
+    searchByName(value);
     inputRef.current.focus({
       cursor: 'all',
     });
   };
 
   const handleChange = (value) => {
-    handleSearchByCategory(value);
+    searchByCategory(value);
     setSelected(value);
   };
 
@@ -65,7 +70,6 @@ const SearchBar = ({ handleSearchByCategory, setSelected, selected }) => {
         />
         <StyledSelect
           value={selected}
-          defaultValue="# 카테고리"
           options={options}
           size="large"
           onChange={handleChange}

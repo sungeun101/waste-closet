@@ -24,7 +24,7 @@ const QnA = () => {
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
   const [visible, setVisible] = useState(false);
-  const [selected, setSelected] = useState('# 카테고리');
+  const [selected, setSelected] = useState('# 분류별 검색');
   const [form] = Form.useForm();
 
   const fetchQuestions = async () => {
@@ -88,22 +88,37 @@ const QnA = () => {
     setCurrentPageNumber(page);
   };
 
-  const handleSearchByCategory = async (value) => {
+  const searchByCategory = async (value) => {
     setError(null);
     setLoading(true);
     try {
       const response = await questionService.getAll({
-        params: { category: value },
+        params: { sortBy: 'createdAt:desc' },
       });
       const questions = response.data.results;
-      if (questions.length > 0) {
-        const searchResult = questions.filter(
-          (question) => question.category === value
-        );
-        setQuestions(searchResult);
-      } else {
-        setQuestions([]);
-      }
+      const searchResult = questions.filter(
+        (question) => question.category === value
+      );
+      setQuestions(searchResult);
+    } catch (e) {
+      setError(e);
+    }
+    setLoading(false);
+  };
+
+  const searchByName = async (value) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await questionService.getAll({
+        params: { sortBy: 'createdAt:desc' },
+      });
+      const questions = response.data.results;
+      const searchResult = questions.filter(
+        (question) =>
+          question.title.includes(value) || question.body.includes(value)
+      );
+      setQuestions(searchResult);
     } catch (e) {
       setError(e);
     }
@@ -112,20 +127,22 @@ const QnA = () => {
 
   const handleReload = () => {
     fetchQuestions();
-    setSelected('# 카테고리');
+    setSelected('# 분류별 검색');
   };
 
   return (
     <>
-      {error && (
+      {error && showErrorMsg}
+      {/* {error && (
         <Result
           status="500"
           title="500"
           subTitle="Sorry, something went wrong."
         />
-      )}
+      )} */}
       <SearchBar
-        handleSearchByCategory={handleSearchByCategory}
+        searchByCategory={searchByCategory}
+        searchByName={searchByName}
         setSelected={setSelected}
         selected={selected}
       />
