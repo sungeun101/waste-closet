@@ -88,6 +88,11 @@ const QnA = () => {
     setCurrentPageNumber(page);
   };
 
+  const handleReload = () => {
+    fetchQuestions();
+    setSelected('# 분류별 검색');
+  };
+
   const searchByCategory = async (value) => {
     setError(null);
     setLoading(true);
@@ -123,11 +128,6 @@ const QnA = () => {
       setError(e);
     }
     setLoading(false);
-  };
-
-  const handleReload = () => {
-    fetchQuestions();
-    setSelected('# 분류별 검색');
   };
 
   return (

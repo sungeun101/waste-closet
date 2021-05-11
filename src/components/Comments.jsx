@@ -14,20 +14,25 @@ const Comments = ({
   showCommentMessage,
   loading,
   fetchAllComments,
-}) =>
-  loading ? (
-    <Spin />
-  ) : (
+}) => {
+  return (
     <CommentContainer>
-      {commentsByQid.length > 0 && (
-        <CommentList
-          commentsByQid={commentsByQid}
-          showCommentMessage={showCommentMessage}
-          fetchAllComments={fetchAllComments}
-        />
+      {loading ? (
+        <Spin />
+      ) : (
+        <>
+          {commentsByQid.length > 0 && (
+            <CommentList
+              commentsByQid={commentsByQid}
+              showCommentMessage={showCommentMessage}
+              fetchAllComments={fetchAllComments}
+            />
+          )}
+          <Comment content={<CommentForm addComment={addComment} />} />
+        </>
       )}
-      <Comment content={<CommentForm addComment={addComment} />} />
     </CommentContainer>
   );
+};
 
 export default Comments;

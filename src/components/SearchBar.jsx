@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
@@ -43,6 +43,7 @@ const SearchBar = ({
   setSelected,
   selected,
 }) => {
+  const [value, setValue] = useState('');
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
@@ -57,6 +58,14 @@ const SearchBar = ({
     setSelected(value);
   };
 
+  const handleTag = (e) => {
+    const {
+      target: { innerText },
+    } = e;
+    setValue(innerText);
+    handleSearch(innerText);
+  };
+
   return (
     <Wrapper>
       <SearchContainer>
@@ -67,6 +76,7 @@ const SearchBar = ({
           size="large"
           onSearch={handleSearch}
           ref={inputRef}
+          value={value}
         />
         <StyledSelect
           value={selected}
@@ -76,11 +86,11 @@ const SearchBar = ({
         />
       </SearchContainer>
 
-      <TagContainer>
+      <TagContainer onClick={handleTag}>
         <StyledTag color="red">빨대</StyledTag>
         <StyledTag color="volcano">수건</StyledTag>
         <StyledTag color="orange">전단지</StyledTag>
-        <StyledTag color="gold">gold</StyledTag>
+        <StyledTag color="gold">뽁뽁이</StyledTag>
         <StyledTag color="lime">lime</StyledTag>
         <StyledTag color="magenta">magenta</StyledTag>
         <StyledTag color="green">green</StyledTag>
