@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Skeleton, message, Result } from 'antd';
+import { Form, Button, Skeleton, message } from 'antd';
 import SearchBar from '../components/SearchBar';
 import ModalForm from '../components/ModalForm';
 import {
@@ -133,13 +133,6 @@ const QnA = () => {
   return (
     <>
       {error && showErrorMsg}
-      {/* {error && (
-        <Result
-          status="500"
-          title="500"
-          subTitle="Sorry, something went wrong."
-        />
-      )} */}
       <SearchBar
         searchByCategory={searchByCategory}
         searchByName={searchByName}

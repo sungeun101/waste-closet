@@ -4,20 +4,15 @@ import { Comment, List, Popconfirm, Button, Form, Input } from 'antd';
 import { commentService } from '../service/commentAPI.js';
 import { showErrorMsg } from '../service/messages.js';
 
-const CommentList = ({ comments, showMessage }) => {
+const CommentList = ({
+  commentsByQid,
+  showCommentMessage,
+  fetchAllComments,
+}) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editId, setEditId] = useState('1');
   const [selectedComment, setSelectedComment] = useState({});
   const { body } = selectedComment;
-
-  const remove = async (id) => {
-    try {
-      await commentService.remove(id);
-    } catch (e) {
-      showErrorMsg();
-    }
-    showMessage('삭제되었습니다.');
-  };
 
   const openEditForm = (comment) => {
     setSelectedComment(comment);
@@ -40,15 +35,27 @@ const CommentList = ({ comments, showMessage }) => {
     } catch (e) {
       showErrorMsg();
     }
-    showMessage('수정되었습니다.');
+    showCommentMessage('수정되었습니다.');
+  };
+
+  const remove = async (id) => {
+    try {
+      await commentService.remove(id);
+    } catch (e) {
+      showErrorMsg();
+    }
+    fetchAllComments();
+    showCommentMessage('삭제되었습니다.');
   };
 
   return (
     <List
-      dataSource={comments}
-      header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+      dataSource={commentsByQid}
+      header={`${commentsByQid.length} ${
+        commentsByQid.length > 1 ? 'replies' : 'reply'
+      }`}
       itemLayout="horizontal"
-      renderItem={(comment) => {
+      renderItem={(comment) =>
         editId === comment.id && showEdit ? (
           <Form onFinish={() => update(comment.id)}>
             <Form.Item>
@@ -76,8 +83,8 @@ const CommentList = ({ comments, showMessage }) => {
               <Button>삭제</Button>
             </Popconfirm>
           </>
-        );
-      }}
+        )
+      }
     />
   );
 };

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Popconfirm, Collapse, Spin, Tag } from 'antd';
+import { Button, Popconfirm, Collapse, Tag, message } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { showErrorMsg } from '../service/messages.js';
 import { commentService } from '../service/commentAPI.js';
 import { questionService } from '../service/config.js';
-
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -27,27 +26,65 @@ const StyledConfirm = styled(Popconfirm)`
 
 const QuestionList = ({ questions, showMessage }) => {
   // console.log('QuestionList');
-  const [loading, setLoading] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
   const [comments, setComments] = useState([]);
+  const [commentsByQid, setCommentsByQid] = useState([]);
+  const [loading, setLoading] = useState([]);
 
   const fetchAllComments = async () => {
-    setLoading(true);
     try {
-      const response = await commentService.getAll({ params: { limit: 100 } });
+      const response = await commentService.getAll({
+        params: { limit: 100 },
+      });
       // console.log(response);
       setComments(response.data.results);
+    } catch (e) {
+      showErrorMsg();
+    }
+  };
+
+  useEffect(() => {
+    fetchAllComments();
+  }, []);
+
+  const addComment = async (input) => {
+    const { body } = input;
+    try {
+      await commentService.add({
+        questionId,
+        body,
+      });
+    } catch (e) {
+      showErrorMsg();
+    }
+    fetchAllComments();
+    showCommentMessage('작성되었습니다.');
+  };
+
+  const fetchCommentsByQid = async (questionId) => {
+    setLoading(true);
+    try {
+      const response = await commentService.getAll({
+        params: { questionId },
+      });
+      // console.log(response);
+      setCommentsByQid(response.data.results);
     } catch (e) {
       showErrorMsg();
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchAllComments();
-  }, []);
+  const showCommentMessage = (text) => {
+    const key = 'updatable';
+    message.loading({ content: 'Loading...', key });
+    setTimeout(() => {
+      message.success({ content: text, key, duration: 2 });
+      fetchCommentsByQid(questionId);
+    }, 1000);
+  };
 
   const checkIfReplied = (id) => {
     // console.log(id);
@@ -87,6 +124,7 @@ const QuestionList = ({ questions, showMessage }) => {
   const handlePanelChange = (key) => {
     setShowEdit(false);
     setQuestionId(key);
+    fetchCommentsByQid(key);
   };
 
   const showPanelHeader = (question) => {
@@ -115,8 +153,6 @@ const QuestionList = ({ questions, showMessage }) => {
                 showMessage={showMessage}
                 setShowEdit={setShowEdit}
               />
-            ) : loading ? (
-              <Spin />
             ) : (
               <>
                 <ContentContainer>
@@ -134,7 +170,13 @@ const QuestionList = ({ questions, showMessage }) => {
                   </div>
                 </ContentContainer>
 
-                <Comments comments={comments} questionId={questionId} />
+                <Comments
+                  addComment={addComment}
+                  commentsByQid={commentsByQid}
+                  showCommentMessage={showCommentMessage}
+                  loading={loading}
+                  fetchAllComments={fetchAllComments}
+                />
               </>
             )}
           </Panel>
