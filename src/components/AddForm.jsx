@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input } from 'antd';
 import styled from 'styled-components';
-import SelectBar from './SelectBar';
+import CategoryBar from './CategoryBar';
 
 const StyledForm = styled(Form)`
   height: 100%;
@@ -16,13 +16,14 @@ const StyledItem = styled(Form.Item)`
   justify-content: center;
 `;
 
-const AddForm = ({ setVisible, form, addQuestion }) => {
+const AddForm = ({ setVisible, form, addQuestion, selected, setSelected }) => {
   const [category, setCategory] = useState('');
 
   const handleSubmit = (values) => {
     const { title, body } = values;
     addQuestion({ category, title, body });
     setVisible(false);
+    setSelected('# 카테고리');
   };
 
   const getSelectedOption = (value) => {
@@ -32,7 +33,11 @@ const AddForm = ({ setVisible, form, addQuestion }) => {
   return (
     <>
       <StyledForm form={form} id="add-form" onFinish={handleSubmit}>
-        <SelectBar selectedOption={getSelectedOption} />
+        <CategoryBar
+          selectedOption={getSelectedOption}
+          selected={selected}
+          setSelected={setSelected}
+        />
         <StyledItem
           name="title"
           rules={[

@@ -9,11 +9,12 @@ const CommentContainer = styled.div`
 `;
 
 const Comments = ({
-  addComment,
-  commentsByQid,
-  showCommentMessage,
   loading,
+  commentsByQid,
   fetchAllComments,
+  fetchCommentsByQid,
+  addComment,
+  questionId,
 }) => {
   return (
     <CommentContainer>
@@ -24,8 +25,9 @@ const Comments = ({
           {commentsByQid.length > 0 && (
             <CommentList
               commentsByQid={commentsByQid}
-              showCommentMessage={showCommentMessage}
               fetchAllComments={fetchAllComments}
+              fetchCommentsByQid={fetchCommentsByQid}
+              questionId={questionId}
             />
           )}
           <Comment content={<CommentForm addComment={addComment} />} />

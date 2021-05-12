@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Select } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -23,9 +23,7 @@ const options = [
   { value: '일반쓰레기' },
 ];
 
-const SelectBar = ({ selectedOption }) => {
-  const [selected, setSelected] = useState('# 카테고리');
-
+const CategoryBar = ({ selected, setSelected, selectedOption }) => {
   useEffect(() => {
     setSelected('# 카테고리');
   }, []);
@@ -53,4 +51,4 @@ const SelectBar = ({ selectedOption }) => {
   );
 };
 
-export default SelectBar;
+export default CategoryBar;

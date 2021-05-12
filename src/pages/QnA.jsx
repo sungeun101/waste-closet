@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Skeleton, message } from 'antd';
-import SearchBar from '../components/SearchBar';
+import { Form, Button, Skeleton } from 'antd';
+import SearchHeader from '../components/SearchHeader';
 import ModalForm from '../components/ModalForm';
 import {
   StyledButton,
@@ -10,7 +10,7 @@ import {
 } from './QnA.elements';
 import QuestionList from '../components/QuestionList';
 import { questionService } from '../service/config';
-import { showErrorMsg } from '../service/messages';
+import { showSuccessMsg, showErrorMsg } from '../service/messages';
 import {
   DeleteOutlined,
   ReloadOutlined,
@@ -25,14 +25,16 @@ const QnA = () => {
   const [totalResults, setTotalResults] = useState(1);
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState('# 분류별 검색');
+  // const [searchValue, setSearchValue] = useState('');
   const [form] = Form.useForm();
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = async (page = currentPageNumber) => {
+    console.log(currentPageNumber);
     setError(null);
     setLoading(true);
     try {
       const response = await questionService.getAll({
-        params: { page: currentPageNumber, sortBy: 'createdAt:desc' },
+        params: { page, sortBy: 'createdAt:desc' },
       });
       // console.log(response);
       setQuestions(response.data.results);
@@ -47,25 +49,17 @@ const QnA = () => {
     fetchQuestions();
   }, [currentPageNumber]);
 
-  const showMessage = (text) => {
-    const key = 'updatable';
-    message.loading({ content: 'Loading...', key });
-    setTimeout(() => {
-      message.success({ content: text, key, duration: 2 });
-      fetchQuestions();
-    }, 1000);
-  };
-
   const addQuestion = async (values) => {
     try {
       await questionService.add(values);
     } catch (e) {
       showErrorMsg();
     }
-    showMessage('질문이 작성되었습니다');
+    await fetchQuestions();
+    showSuccessMsg('질문이 작성되었습니다');
   };
 
-  const deleteAllQuestions = async () => {
+  const deletePage = async () => {
     setLoading(true);
     try {
       for await (const question of questions) {
@@ -75,7 +69,12 @@ const QnA = () => {
       showErrorMsg();
     }
     setLoading(false);
-    showMessage('삭제되었습니다');
+    if (currentPageNumber > 1) {
+      await fetchQuestions(currentPageNumber - 1);
+    } else {
+      await fetchQuestions();
+    }
+    showSuccessMsg('삭제되었습니다');
   };
 
   const showModal = () => {
@@ -84,12 +83,12 @@ const QnA = () => {
   };
 
   const handlePageChange = (page) => {
-    console.log(page);
     setCurrentPageNumber(page);
   };
 
   const handleReload = () => {
     fetchQuestions();
+    // setSearchValue('');
     setSelected('# 분류별 검색');
   };
 
@@ -105,6 +104,7 @@ const QnA = () => {
         (question) => question.category === value
       );
       setQuestions(searchResult);
+      setTotalResults(searchResult.length);
     } catch (e) {
       setError(e);
     }
@@ -116,14 +116,23 @@ const QnA = () => {
     setLoading(true);
     try {
       const response = await questionService.getAll({
-        params: { sortBy: 'createdAt:desc' },
+        params: {
+          // title: value,
+          // body: value,
+          // category: value,
+          sortBy: 'createdAt:desc',
+        },
       });
       const questions = response.data.results;
+      // console.log(questions);
       const searchResult = questions.filter(
         (question) =>
-          question.title.includes(value) || question.body.includes(value)
+          question.title.includes(value) ||
+          question.body.includes(value) ||
+          question.category.includes(value)
       );
       setQuestions(searchResult);
+      setTotalResults(searchResult.length);
     } catch (e) {
       setError(e);
     }
@@ -133,11 +142,13 @@ const QnA = () => {
   return (
     <>
       {error && showErrorMsg}
-      <SearchBar
+      <SearchHeader
         searchByCategory={searchByCategory}
         searchByName={searchByName}
         setSelected={setSelected}
         selected={selected}
+        // searchValue={searchValue}
+        // setSearchValue={setSearchValue}
       />
       <BtnContainer>
         <Button type="primary" onClick={showModal}>
@@ -150,22 +161,24 @@ const QnA = () => {
           setVisible={setVisible}
           addQuestion={addQuestion}
         />
-        <div>
-          <Button onClick={handleReload}>
-            <ReloadOutlined />
-          </Button>
-          <StyledConfirm
-            title="정말 삭제하시겠습니까?"
-            onConfirm={deleteAllQuestions}
-            okText="Yes"
-            cancelText="No"
-          >
-            <StyledButton danger>
-              <DeleteOutlined />
-              페이지 삭제
-            </StyledButton>
-          </StyledConfirm>
-        </div>
+        {questions.length > 0 && (
+          <div>
+            <Button onClick={handleReload}>
+              <ReloadOutlined />
+            </Button>
+            <StyledConfirm
+              title="이 페이지를 삭제하시겠습니까?"
+              onConfirm={deletePage}
+              okText="Yes"
+              cancelText="No"
+            >
+              <StyledButton danger>
+                <DeleteOutlined />
+                페이지 삭제
+              </StyledButton>
+            </StyledConfirm>
+          </div>
+        )}
       </BtnContainer>
       {loading ? (
         <>
@@ -173,7 +186,12 @@ const QnA = () => {
           <Skeleton active />
         </>
       ) : questions.length > 0 ? (
-        <QuestionList questions={questions} showMessage={showMessage} />
+        <QuestionList
+          questions={questions}
+          selected={selected}
+          setSelected={setSelected}
+          fetchQuestions={fetchQuestions}
+        />
       ) : (
         <div>검색 결과가 없습니다.</div>
       )}

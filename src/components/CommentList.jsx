@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 // import styled from 'styled-components';
 import { Comment, List, Popconfirm, Button, Form, Input } from 'antd';
 import { commentService } from '../service/commentAPI.js';
-import { showErrorMsg } from '../service/messages.js';
+import { showSuccessMsg, showErrorMsg } from '../service/messages.js';
 
 const CommentList = ({
   commentsByQid,
-  showCommentMessage,
   fetchAllComments,
+  fetchCommentsByQid,
+  questionId,
 }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editId, setEditId] = useState('1');
@@ -35,7 +36,8 @@ const CommentList = ({
     } catch (e) {
       showErrorMsg();
     }
-    showCommentMessage('수정되었습니다.');
+    await fetchCommentsByQid(questionId);
+    showSuccessMsg('수정되었습니다.');
   };
 
   const remove = async (id) => {
@@ -44,8 +46,9 @@ const CommentList = ({
     } catch (e) {
       showErrorMsg();
     }
-    fetchAllComments();
-    showCommentMessage('삭제되었습니다.');
+    await fetchCommentsByQid(questionId);
+    await fetchAllComments();
+    showSuccessMsg('삭제되었습니다.');
   };
 
   return (
@@ -58,8 +61,16 @@ const CommentList = ({
       renderItem={(comment) =>
         editId === comment.id && showEdit ? (
           <Form onFinish={() => update(comment.id)}>
-            <Form.Item>
-              <Input name="body" value={body} onChange={handleEditChange} />
+            <Form.Item
+              name="body"
+              rules={[
+                {
+                  required: true,
+                  message: '내용을 입력해주세요.',
+                },
+              ]}
+            >
+              <Input value={body} onChange={handleEditChange} />
             </Form.Item>
             <Form.Item>
               <Button type="default" htmlType="submit">

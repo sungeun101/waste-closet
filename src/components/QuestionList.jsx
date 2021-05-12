@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Popconfirm, Collapse, Tag, message } from 'antd';
+import { Button, Popconfirm, Collapse, Tag } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
-import { showErrorMsg } from '../service/messages.js';
+import { showSuccessMsg, showErrorMsg } from '../service/messages.js';
 import { commentService } from '../service/commentAPI.js';
 import { questionService } from '../service/config.js';
 const { Panel } = Collapse;
@@ -24,7 +24,7 @@ const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
 `;
 
-const QuestionList = ({ questions, showMessage }) => {
+const QuestionList = ({ questions, selected, setSelected, fetchQuestions }) => {
   // console.log('QuestionList');
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
@@ -59,31 +59,9 @@ const QuestionList = ({ questions, showMessage }) => {
     } catch (e) {
       showErrorMsg();
     }
-    fetchAllComments();
-    showCommentMessage('작성되었습니다.');
-  };
-
-  const fetchCommentsByQid = async (questionId) => {
-    setLoading(true);
-    try {
-      const response = await commentService.getAll({
-        params: { questionId },
-      });
-      // console.log(response);
-      setCommentsByQid(response.data.results);
-    } catch (e) {
-      showErrorMsg();
-    }
-    setLoading(false);
-  };
-
-  const showCommentMessage = (text) => {
-    const key = 'updatable';
-    message.loading({ content: 'Loading...', key });
-    setTimeout(() => {
-      message.success({ content: text, key, duration: 2 });
-      fetchCommentsByQid(questionId);
-    }, 1000);
+    await fetchCommentsByQid(questionId);
+    await fetchAllComments();
+    showSuccessMsg('작성되었습니다.');
   };
 
   const checkIfReplied = (id) => {
@@ -113,12 +91,27 @@ const QuestionList = ({ questions, showMessage }) => {
     } catch (e) {
       showErrorMsg();
     }
-    showMessage('삭제되었습니다');
+    await fetchQuestions();
+    showSuccessMsg('삭제되었습니다');
   };
 
   const openEditForm = (question) => {
     setSelectedQuestion(question);
     setShowEdit(true);
+  };
+
+  const fetchCommentsByQid = async (questionId) => {
+    setLoading(true);
+    try {
+      const response = await commentService.getAll({
+        params: { questionId },
+      });
+      // console.log(response);
+      setCommentsByQid(response.data.results);
+    } catch (e) {
+      showErrorMsg();
+    }
+    setLoading(false);
   };
 
   const handlePanelChange = (key) => {
@@ -150,8 +143,10 @@ const QuestionList = ({ questions, showMessage }) => {
               <EditForm
                 selectedQuestion={selectedQuestion}
                 setSelectedQuestion={setSelectedQuestion}
-                showMessage={showMessage}
                 setShowEdit={setShowEdit}
+                selected={selected}
+                setSelected={setSelected}
+                fetchQuestions={fetchQuestions}
               />
             ) : (
               <>
@@ -173,9 +168,10 @@ const QuestionList = ({ questions, showMessage }) => {
                 <Comments
                   addComment={addComment}
                   commentsByQid={commentsByQid}
-                  showCommentMessage={showCommentMessage}
                   loading={loading}
                   fetchAllComments={fetchAllComments}
+                  fetchCommentsByQid={fetchCommentsByQid}
+                  questionId={questionId}
                 />
               </>
             )}

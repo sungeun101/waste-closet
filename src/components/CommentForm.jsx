@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // import styled from 'styled-components';
 import { Form, Input, Button } from 'antd';
 const { TextArea } = Input;
@@ -6,10 +6,6 @@ const { TextArea } = Input;
 const CommentForm = ({ addComment }) => {
   const [value, setValue] = useState('');
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    form.resetFields();
-  }, []);
 
   const handleChange = (e) => {
     setValue(e.target.value);

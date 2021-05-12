@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { questionService } from '../service/config';
-import { showErrorMsg } from '../service/messages';
+import { showSuccessMsg, showErrorMsg } from '../service/messages';
 // import styled from 'styled-components';
 import { Form, Input, Button } from 'antd';
-import SelectBar from './SelectBar.jsx';
+import CategoryBar from './CategoryBar.jsx';
 
 const EditForm = ({
   selectedQuestion,
   setSelectedQuestion,
-  showMessage,
   setShowEdit,
+  selected,
+  setSelected,
+  fetchQuestions,
 }) => {
   const [category, setCategory] = useState('');
   const { id, title, body } = selectedQuestion;
@@ -28,7 +30,8 @@ const EditForm = ({
     } catch (e) {
       showErrorMsg();
     }
-    showMessage('수정되었습니다');
+    await fetchQuestions();
+    showSuccessMsg('수정되었습니다');
   };
 
   const getSelectedOption = (value) => {
@@ -37,7 +40,11 @@ const EditForm = ({
 
   return (
     <Form id="edit-form" onFinish={updateQuestion}>
-      <SelectBar selectedOption={getSelectedOption} />
+      <CategoryBar
+        selected={selected}
+        setSelected={setSelected}
+        selectedOption={getSelectedOption}
+      />
       <Form.Item>
         <Input name="title" value={title} onChange={handleEditChange} />
       </Form.Item>

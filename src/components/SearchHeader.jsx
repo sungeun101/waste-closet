@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
@@ -37,13 +37,12 @@ const options = [
   { value: '일반쓰레기' },
 ];
 
-const SearchBar = ({
+const SearchHeader = ({
   searchByCategory,
   searchByName,
   setSelected,
   selected,
 }) => {
-  const [value, setValue] = useState('');
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
@@ -53,7 +52,7 @@ const SearchBar = ({
     });
   };
 
-  const handleChange = (value) => {
+  const handleSelectChange = (value) => {
     searchByCategory(value);
     setSelected(value);
   };
@@ -62,7 +61,6 @@ const SearchBar = ({
     const {
       target: { innerText },
     } = e;
-    setValue(innerText);
     handleSearch(innerText);
   };
 
@@ -76,13 +74,12 @@ const SearchBar = ({
           size="large"
           onSearch={handleSearch}
           ref={inputRef}
-          value={value}
         />
         <StyledSelect
           value={selected}
           options={options}
           size="large"
-          onChange={handleChange}
+          onChange={handleSelectChange}
         />
       </SearchContainer>
 
@@ -103,4 +100,4 @@ const SearchBar = ({
   );
 };
 
-export default SearchBar;
+export default SearchHeader;

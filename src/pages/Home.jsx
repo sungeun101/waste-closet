@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Card } from 'antd';
-import SearchBar from '../components/SearchBar';
+// import SearchHeader from '../components/SearchHeader';
 import { Carousel } from 'antd';
 import { List } from 'antd';
 
@@ -52,7 +52,7 @@ const data = [
 const Home = () => {
   return (
     <Wrapper>
-      <SearchBar />
+      {/* <SearchHeader /> */}
 
       <CardContainer>
         <StyledCard color="red" style={gridStyle}>

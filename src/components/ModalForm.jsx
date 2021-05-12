@@ -1,10 +1,14 @@
 import { Modal, Button } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import AddForm from './AddForm';
 
 const ModalForm = ({ form, visible, setVisible, addQuestion }) => {
+  const [selected, setSelected] = useState('# 카테고리');
+
   const handleCancel = () => {
     setVisible(false);
+    form.resetFields();
+    setSelected('# 카테고리');
   };
 
   return (
@@ -20,7 +24,13 @@ const ModalForm = ({ form, visible, setVisible, addQuestion }) => {
         </Button>,
       ]}
     >
-      <AddForm setVisible={setVisible} form={form} addQuestion={addQuestion} />
+      <AddForm
+        setVisible={setVisible}
+        form={form}
+        addQuestion={addQuestion}
+        selected={selected}
+        setSelected={setSelected}
+      />
     </Modal>
   );
 };
