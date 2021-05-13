@@ -24,8 +24,8 @@ const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
 `;
 
-const QuestionList = ({ questions, selected, setSelected, fetchQuestions }) => {
-  // console.log('QuestionList');
+const QuestionList = ({ questions, fetchQuestions }) => {
+  console.log('QuestionList');
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
@@ -144,8 +144,6 @@ const QuestionList = ({ questions, selected, setSelected, fetchQuestions }) => {
                 selectedQuestion={selectedQuestion}
                 setSelectedQuestion={setSelectedQuestion}
                 setShowEdit={setShowEdit}
-                selected={selected}
-                setSelected={setSelected}
                 fetchQuestions={fetchQuestions}
               />
             ) : (

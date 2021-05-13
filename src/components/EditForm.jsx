@@ -9,8 +9,6 @@ const EditForm = ({
   selectedQuestion,
   setSelectedQuestion,
   setShowEdit,
-  selected,
-  setSelected,
   fetchQuestions,
 }) => {
   const [category, setCategory] = useState('');
@@ -41,8 +39,8 @@ const EditForm = ({
   return (
     <Form id="edit-form" onFinish={updateQuestion}>
       <CategoryBar
-        selected={selected}
-        setSelected={setSelected}
+        category={category}
+        setCategory={setCategory}
         selectedOption={getSelectedOption}
       />
       <Form.Item>

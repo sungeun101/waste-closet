@@ -3,12 +3,16 @@ import React, { useState } from 'react';
 import AddForm from './AddForm';
 
 const ModalForm = ({ form, visible, setVisible, addQuestion }) => {
-  const [selected, setSelected] = useState('# 카테고리');
+  const [category, setCategory] = useState('# 카테고리');
 
   const handleCancel = () => {
     setVisible(false);
     form.resetFields();
-    setSelected('# 카테고리');
+    setCategory('# 카테고리');
+  };
+
+  const handleSubmit = () => {
+    setCategory('# 카테고리');
   };
 
   return (
@@ -19,17 +23,22 @@ const ModalForm = ({ form, visible, setVisible, addQuestion }) => {
         <Button key="back" onClick={handleCancel}>
           취소
         </Button>,
-        <Button form="add-form" htmlType="submit" key="submit" type="primary">
+        <Button
+          form="add-form"
+          htmlType="submit"
+          key="submit"
+          type="primary"
+          onClick={handleSubmit}
+        >
           질문하기
         </Button>,
       ]}
     >
       <AddForm
-        setVisible={setVisible}
         form={form}
         addQuestion={addQuestion}
-        selected={selected}
-        setSelected={setSelected}
+        category={category}
+        setCategory={setCategory}
       />
     </Modal>
   );

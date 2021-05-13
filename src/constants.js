@@ -1,4 +1,10 @@
-export const tags = ['빨대', '수건', '전단지', '뽁뽁이'];
+export const tags = [
+  { value: '빨대', color: 'red' },
+  { value: '수건', color: 'volcano' },
+  { value: '전단지', color: 'orange' },
+  { value: '뽁뽁이', color: 'gold' },
+  { value: 'lime', color: 'lime' },
+];
 
 export const options = [
   { value: '종이/종이팩' },

@@ -25,11 +25,10 @@ const QnA = () => {
   const [totalResults, setTotalResults] = useState(1);
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState('# 분류별 검색');
-  // const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState('');
   const [form] = Form.useForm();
 
   const fetchQuestions = async (page = currentPageNumber) => {
-    console.log(currentPageNumber);
     setError(null);
     setLoading(true);
     try {
@@ -50,11 +49,13 @@ const QnA = () => {
   }, [currentPageNumber]);
 
   const addQuestion = async (values) => {
+    console.log(values);
     try {
       await questionService.add(values);
     } catch (e) {
       showErrorMsg();
     }
+    setVisible(false);
     await fetchQuestions();
     showSuccessMsg('질문이 작성되었습니다');
   };
@@ -88,19 +89,27 @@ const QnA = () => {
 
   const handleReload = () => {
     fetchQuestions();
-    // setSearchValue('');
+    setSearchValue('');
     setSelected('# 분류별 검색');
+  };
+
+  const fetchAllQuestions = async () => {
+    try {
+      const response = await questionService.getAll({
+        params: { limit: 1000, sortBy: 'createdAt:desc' },
+      });
+      return response.data.results;
+    } catch (e) {
+      setError(e);
+    }
   };
 
   const searchByCategory = async (value) => {
     setError(null);
     setLoading(true);
     try {
-      const response = await questionService.getAll({
-        params: { sortBy: 'createdAt:desc' },
-      });
-      const questions = response.data.results;
-      const searchResult = questions.filter(
+      const allQuestions = await fetchAllQuestions();
+      const searchResult = allQuestions.filter(
         (question) => question.category === value
       );
       setQuestions(searchResult);
@@ -115,21 +124,10 @@ const QnA = () => {
     setError(null);
     setLoading(true);
     try {
-      const response = await questionService.getAll({
-        params: {
-          // title: value,
-          // body: value,
-          // category: value,
-          sortBy: 'createdAt:desc',
-        },
-      });
-      const questions = response.data.results;
-      // console.log(questions);
-      const searchResult = questions.filter(
+      const allQuestions = await fetchAllQuestions();
+      const searchResult = allQuestions.filter(
         (question) =>
-          question.title.includes(value) ||
-          question.body.includes(value) ||
-          question.category.includes(value)
+          question.title.includes(value) || question.body.includes(value)
       );
       setQuestions(searchResult);
       setTotalResults(searchResult.length);
@@ -147,8 +145,8 @@ const QnA = () => {
         searchByName={searchByName}
         setSelected={setSelected}
         selected={selected}
-        // searchValue={searchValue}
-        // setSearchValue={setSearchValue}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
       />
       <BtnContainer>
         <Button type="primary" onClick={showModal}>
@@ -161,24 +159,24 @@ const QnA = () => {
           setVisible={setVisible}
           addQuestion={addQuestion}
         />
-        {questions.length > 0 && (
-          <div>
-            <Button onClick={handleReload}>
-              <ReloadOutlined />
-            </Button>
-            <StyledConfirm
-              title="이 페이지를 삭제하시겠습니까?"
-              onConfirm={deletePage}
-              okText="Yes"
-              cancelText="No"
-            >
+        <div>
+          <Button onClick={handleReload}>
+            <ReloadOutlined />
+          </Button>
+          <StyledConfirm
+            title="이 페이지를 삭제하시겠습니까?"
+            onConfirm={deletePage}
+            okText="Yes"
+            cancelText="No"
+          >
+            {questions.length > 0 && (
               <StyledButton danger>
                 <DeleteOutlined />
                 페이지 삭제
               </StyledButton>
-            </StyledConfirm>
-          </div>
-        )}
+            )}
+          </StyledConfirm>
+        </div>
       </BtnContainer>
       {loading ? (
         <>
@@ -186,12 +184,7 @@ const QnA = () => {
           <Skeleton active />
         </>
       ) : questions.length > 0 ? (
-        <QuestionList
-          questions={questions}
-          selected={selected}
-          setSelected={setSelected}
-          fetchQuestions={fetchQuestions}
-        />
+        <QuestionList questions={questions} fetchQuestions={fetchQuestions} />
       ) : (
         <div>검색 결과가 없습니다.</div>
       )}

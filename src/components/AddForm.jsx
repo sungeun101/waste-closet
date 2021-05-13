@@ -16,27 +16,25 @@ const StyledItem = styled(Form.Item)`
   justify-content: center;
 `;
 
-const AddForm = ({ setVisible, form, addQuestion, selected, setSelected }) => {
-  const [category, setCategory] = useState('');
+const AddForm = ({ form, addQuestion, category, setCategory }) => {
+  const [selectedOption, setSelectedOption] = useState('');
 
   const handleSubmit = (values) => {
     const { title, body } = values;
-    addQuestion({ category, title, body });
-    setVisible(false);
-    setSelected('# 카테고리');
+    addQuestion({ category: selectedOption, title, body });
+    setSelectedOption('');
   };
-
   const getSelectedOption = (value) => {
-    setCategory(value);
+    setSelectedOption(value);
   };
 
   return (
     <>
       <StyledForm form={form} id="add-form" onFinish={handleSubmit}>
         <CategoryBar
-          selectedOption={getSelectedOption}
-          selected={selected}
-          setSelected={setSelected}
+          category={category}
+          setCategory={setCategory}
+          setSelectedOption={getSelectedOption}
         />
         <StyledItem
           name="title"

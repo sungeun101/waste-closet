@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
+import { options, tags } from '../constants';
 const { Search } = Input;
 
 const Wrapper = styled.div`
@@ -26,30 +27,27 @@ const StyledTag = styled(Tag)`
     cursor: pointer;
   }
 `;
-const options = [
-  { value: '종이/종이팩' },
-  { value: '고철' },
-  { value: '금속캔' },
-  { value: '비닐' },
-  { value: '플라스틱' },
-  { value: '스티로폼' },
-  { value: '불연성종량제' },
-  { value: '일반쓰레기' },
-];
 
 const SearchHeader = ({
   searchByCategory,
   searchByName,
   setSelected,
   selected,
+  searchValue,
+  setSearchValue,
 }) => {
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
+    if (!value) return;
     searchByName(value);
     inputRef.current.focus({
       cursor: 'all',
     });
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
   };
 
   const handleSelectChange = (value) => {
@@ -69,6 +67,8 @@ const SearchHeader = ({
       <SearchContainer>
         <StyledSearch
           placeholder="이름으로 검색"
+          value={searchValue}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="large"
@@ -84,17 +84,11 @@ const SearchHeader = ({
       </SearchContainer>
 
       <TagContainer onClick={handleTag}>
-        <StyledTag color="red">빨대</StyledTag>
-        <StyledTag color="volcano">수건</StyledTag>
-        <StyledTag color="orange">전단지</StyledTag>
-        <StyledTag color="gold">뽁뽁이</StyledTag>
-        <StyledTag color="lime">lime</StyledTag>
-        <StyledTag color="magenta">magenta</StyledTag>
-        <StyledTag color="green">green</StyledTag>
-        <StyledTag color="cyan">cyan</StyledTag>
-        <StyledTag color="blue">blue</StyledTag>
-        <StyledTag color="geekblue">geekblue</StyledTag>
-        <StyledTag color="purple">purple</StyledTag>
+        {tags.map((tag, index) => (
+          <StyledTag key={index} color={tag.color}>
+            {tag.value}
+          </StyledTag>
+        ))}
       </TagContainer>
     </Wrapper>
   );

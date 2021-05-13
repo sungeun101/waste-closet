@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Button, Select } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import { options } from '../constants';
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,35 +13,24 @@ const StyledSelect = styled(Select)`
   margin-right: 1rem;
 `;
 
-const options = [
-  { value: '종이/종이팩' },
-  { value: '고철' },
-  { value: '금속캔' },
-  { value: '비닐' },
-  { value: '플라스틱' },
-  { value: '스티로폼' },
-  { value: '불연성종량제' },
-  { value: '일반쓰레기' },
-];
-
-const CategoryBar = ({ selected, setSelected, selectedOption }) => {
+const CategoryBar = ({ category, setCategory, setSelectedOption }) => {
   useEffect(() => {
-    setSelected('# 카테고리');
+    setCategory('# 카테고리');
   }, []);
 
   const handleChange = (value) => {
-    selectedOption(value);
-    setSelected(value);
+    setSelectedOption(value);
+    setCategory(value);
   };
 
   const clearSelect = () => {
-    setSelected('# 카테고리');
+    setCategory('# 카테고리');
   };
 
   return (
     <Wrapper>
       <StyledSelect
-        value={selected}
+        value={category}
         onChange={handleChange}
         options={options}
       />
