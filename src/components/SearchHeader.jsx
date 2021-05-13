@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
@@ -36,6 +36,10 @@ const SearchHeader = ({
   searchValue,
   setSearchValue,
 }) => {
+  // useEffect(()=>{
+
+  // },[])
+
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
@@ -44,6 +48,7 @@ const SearchHeader = ({
     inputRef.current.focus({
       cursor: 'all',
     });
+    setSelected('# 분류별 검색');
   };
 
   const handleSearchChange = (e) => {
@@ -53,13 +58,16 @@ const SearchHeader = ({
   const handleSelectChange = (value) => {
     searchByCategory(value);
     setSelected(value);
+    setSearchValue('');
   };
 
-  const handleTag = (e) => {
+  const handleTagClick = (e) => {
     const {
       target: { innerText },
     } = e;
+    setSearchValue(innerText);
     handleSearch(innerText);
+    setSelected('# 분류별 검색');
   };
 
   return (
@@ -83,9 +91,9 @@ const SearchHeader = ({
         />
       </SearchContainer>
 
-      <TagContainer onClick={handleTag}>
+      <TagContainer>
         {tags.map((tag, index) => (
-          <StyledTag key={index} color={tag.color}>
+          <StyledTag key={index} color={tag.color} onClick={handleTagClick}>
             {tag.value}
           </StyledTag>
         ))}
