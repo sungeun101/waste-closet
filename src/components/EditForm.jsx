@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { questionService } from '../service/config';
-import { showSuccessMsg, showErrorMsg } from '../service/messages';
+import { showSuccessMsg, showErrorMsg } from '../messages';
 // import styled from 'styled-components';
 import { Form, Input, Button } from 'antd';
 import CategoryBar from './CategoryBar.jsx';

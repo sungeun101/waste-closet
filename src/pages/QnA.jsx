@@ -10,7 +10,7 @@ import {
 } from './QnA.elements';
 import QuestionList from '../components/QuestionList';
 import { questionService } from '../service/config';
-import { showSuccessMsg, showErrorMsg } from '../service/messages';
+import { showSuccessMsg, showErrorMsg } from '../messages';
 import {
   DeleteOutlined,
   ReloadOutlined,

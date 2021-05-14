@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import styled from 'styled-components';
 import { Comment, List, Popconfirm, Button, Form, Input } from 'antd';
 import { commentService } from '../service/commentAPI.js';
-import { showSuccessMsg, showErrorMsg } from '../service/messages.js';
+import { showSuccessMsg, showErrorMsg } from '../messages.js';
 
 const CommentList = ({
   commentsByQid,

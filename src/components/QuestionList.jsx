@@ -4,7 +4,7 @@ import { Button, Popconfirm, Collapse, Tag } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
-import { showSuccessMsg, showErrorMsg } from '../service/messages.js';
+import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { commentService } from '../service/commentAPI.js';
 import { questionService } from '../service/config.js';
 const { Panel } = Collapse;

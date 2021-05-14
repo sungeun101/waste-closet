@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
@@ -36,10 +36,6 @@ const SearchHeader = ({
   searchValue,
   setSearchValue,
 }) => {
-  // useEffect(()=>{
-
-  // },[])
-
   const inputRef = useRef(null);
 
   const handleSearch = (value) => {
