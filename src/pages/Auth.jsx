@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { authService } from 'service/firebase';
+import { showErrorMsg } from 'messages';
 
 const layout = {
   labelCol: {
@@ -43,22 +44,25 @@ const Auth = () => {
       }
       console.log(data);
     } catch (error) {
-      console.log(error);
+      showErrorMsg();
     }
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
+  const toggleAccount = () => setNewAccount((prev) => !prev);
 
   return (
     <>
+      <div>
+        <Button onClick={toggleAccount}>
+          {newAccount ? 'Sign In' : 'Create Account'}
+        </Button>
+      </div>
+
       <Form
         {...layout}
         name="basic"
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item
           label="Email"
