@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
-import { authService } from 'service/firebase';
+import { authService, firebaseInstance } from 'service/firebase';
 import { showErrorMsg } from 'messages';
 
 const layout = {
@@ -31,7 +31,8 @@ const Auth = () => {
     name === 'password' && setPassword(value);
   };
 
-  const onFinish = async () => {
+  const onFinish = async (event) => {
+    event.preventDefault();
     try {
       let data;
       if (newAccount) {
@@ -50,11 +51,31 @@ const Auth = () => {
 
   const toggleAccount = () => setNewAccount((prev) => !prev);
 
+  const handleSocialLogin = async (name) => {
+    let provider;
+    if (name === 'google') {
+      provider = new firebaseInstance.auth.GoogleAuthProvider();
+    } else if (name === 'github') {
+      provider = new firebaseInstance.auth.GithubAuthProvider();
+    }
+    const data = await authService.signInWithPopup(provider);
+    console.log(data);
+  };
+
   return (
     <>
       <div>
         <Button onClick={toggleAccount}>
           {newAccount ? 'Sign In' : 'Create Account'}
+        </Button>
+      </div>
+
+      <div>
+        <Button onClick={() => handleSocialLogin('google')}>
+          Continue with Google
+        </Button>
+        <Button onClick={() => handleSocialLogin('github')}>
+          Continue with Github
         </Button>
       </div>
 
@@ -99,11 +120,6 @@ const Auth = () => {
           </Button>
         </Form.Item>
       </Form>
-
-      <div>
-        <Button>Continue with Google</Button>
-        <Button>Continue with Github</Button>
-      </div>
     </>
   );
 };
