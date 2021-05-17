@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Menu } from 'antd';
+import { Button, Menu } from 'antd';
 import { FileSearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { authService } from 'service/firebase';
 
 const Navigation = () => {
   const [current, setCurrent] = useState('');
@@ -14,6 +15,13 @@ const Navigation = () => {
     setCurrent(e.key);
   };
 
+  const history = useHistory();
+
+  const onLogOutClick = () => {
+    authService.signOut();
+    history.push('/');
+  };
+
   return (
     <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
       <Menu.Item key="/" icon={<FileSearchOutlined />}>
@@ -22,6 +30,7 @@ const Navigation = () => {
       <Menu.Item key="/qna" icon={<QuestionCircleOutlined />}>
         <Link to="/qna">Q&amp;A</Link>
       </Menu.Item>
+      <Button onClick={onLogOutClick}>Log Out</Button>
     </Menu>
   );
 };

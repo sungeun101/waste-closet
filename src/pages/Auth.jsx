@@ -31,8 +31,7 @@ const Auth = () => {
     name === 'password' && setPassword(value);
   };
 
-  const onFinish = async (event) => {
-    event.preventDefault();
+  const onFinish = async () => {
     try {
       let data;
       if (newAccount) {
@@ -53,13 +52,17 @@ const Auth = () => {
 
   const handleSocialLogin = async (name) => {
     let provider;
-    if (name === 'google') {
-      provider = new firebaseInstance.auth.GoogleAuthProvider();
-    } else if (name === 'github') {
-      provider = new firebaseInstance.auth.GithubAuthProvider();
+    try {
+      if (name === 'google') {
+        provider = new firebaseInstance.auth.GoogleAuthProvider();
+      } else if (name === 'github') {
+        provider = new firebaseInstance.auth.GithubAuthProvider();
+      }
+      const data = await authService.signInWithPopup(provider);
+      console.log(data);
+    } catch {
+      showErrorMsg();
     }
-    const data = await authService.signInWithPopup(provider);
-    console.log(data);
   };
 
   return (

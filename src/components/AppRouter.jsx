@@ -12,27 +12,25 @@ const AppRouter = ({ isLoggedIn }) => {
     <Router>
       <GlobalStyle />
       <Container>
-        <Switch>
-          {isLoggedIn ? (
-            <>
-              <Route path="/" exact>
-                <Navigation />
-                <Home />
-              </Route>
-              <Route path="/qna">
-                <Navigation />
-                <QnA />
-              </Route>
-              <Route>
-                <NotFound />
-              </Route>
-            </>
-          ) : (
-            <Route exact path="/">
-              <Auth />
+        {isLoggedIn ? (
+          <Switch>
+            <Route path="/" exact>
+              <Navigation />
+              <Home />
             </Route>
-          )}
-        </Switch>
+            <Route path="/qna">
+              <Navigation />
+              <QnA />
+            </Route>
+            <Route>
+              <NotFound />
+            </Route>
+          </Switch>
+        ) : (
+          <Route exact path="/">
+            <Auth />
+          </Route>
+        )}
       </Container>
     </Router>
   );
