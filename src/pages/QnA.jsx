@@ -17,7 +17,8 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 
-const QnA = () => {
+const QnA = ({ adminLogin }) => {
+  console.log(adminLogin);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -49,7 +50,7 @@ const QnA = () => {
   }, [currentPageNumber]);
 
   const addQuestion = async (values) => {
-    console.log(values);
+    // console.log(values);
     try {
       await questionService.add(values);
     } catch (e) {
@@ -163,19 +164,21 @@ const QnA = () => {
           <Button onClick={handleReload}>
             <ReloadOutlined />
           </Button>
-          <StyledConfirm
-            title="이 페이지를 삭제하시겠습니까?"
-            onConfirm={deletePage}
-            okText="Yes"
-            cancelText="No"
-          >
-            {questions.length > 0 && (
-              <StyledButton danger>
-                <DeleteOutlined />
-                페이지 삭제
-              </StyledButton>
-            )}
-          </StyledConfirm>
+          {adminLogin && (
+            <StyledConfirm
+              title="이 페이지를 삭제하시겠습니까?"
+              onConfirm={deletePage}
+              okText="Yes"
+              cancelText="No"
+            >
+              {questions.length > 0 && (
+                <StyledButton danger>
+                  <DeleteOutlined />
+                  페이지 삭제
+                </StyledButton>
+              )}
+            </StyledConfirm>
+          )}
         </div>
       </BtnContainer>
       {loading ? (

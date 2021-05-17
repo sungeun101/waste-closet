@@ -18,7 +18,7 @@ const tailLayout = {
   },
 };
 
-const Auth = () => {
+const Auth = ({ setAdminLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newAccount, setNewAccount] = useState(true);
@@ -44,7 +44,7 @@ const Auth = () => {
       }
       console.log(data);
     } catch (error) {
-      showErrorMsg();
+      showErrorMsg(error.message);
     }
   };
 
@@ -60,9 +60,24 @@ const Auth = () => {
       }
       const data = await authService.signInWithPopup(provider);
       console.log(data);
-    } catch {
-      showErrorMsg();
+    } catch (error) {
+      showErrorMsg(error.message);
     }
+  };
+
+  const handleAdminLogin = async () => {
+    const email = 'admin-waste-closet@gmail.com';
+    const password = 'admin1019';
+    try {
+      const data = await authService.signInWithEmailAndPassword(
+        email,
+        password
+      );
+      console.log(data);
+    } catch (error) {
+      showErrorMsg(error.message);
+    }
+    setAdminLogin(true);
   };
 
   return (
@@ -123,6 +138,10 @@ const Auth = () => {
           </Button>
         </Form.Item>
       </Form>
+
+      <div>
+        <Button onClick={handleAdminLogin}>관리자 로그인</Button>
+      </div>
     </>
   );
 };

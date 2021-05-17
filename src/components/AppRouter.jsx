@@ -1,5 +1,10 @@
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import React, { useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom';
 import GlobalStyle, { Container } from '../globalStyles';
 import Auth from '../pages/Auth';
 import Home from '../pages/Home';
@@ -8,6 +13,8 @@ import QnA from '../pages/QnA';
 import Navigation from './Navigation';
 
 const AppRouter = ({ isLoggedIn }) => {
+  const [adminLogin, setAdminLogin] = useState(false);
+
   return (
     <Router>
       <GlobalStyle />
@@ -15,21 +22,26 @@ const AppRouter = ({ isLoggedIn }) => {
         {isLoggedIn ? (
           <Switch>
             <Route path="/" exact>
-              <Navigation />
+              <Navigation setAdminLogin={setAdminLogin} />
               <Home />
             </Route>
             <Route path="/qna">
-              <Navigation />
-              <QnA />
+              <Navigation setAdminLogin={setAdminLogin} />
+              <QnA adminLogin={adminLogin} />
             </Route>
             <Route>
               <NotFound />
             </Route>
           </Switch>
         ) : (
-          <Route exact path="/">
-            <Auth />
-          </Route>
+          <Switch>
+            <Route exact path="/">
+              <Auth setAdminLogin={setAdminLogin} />
+            </Route>
+            <Route>
+              <Redirect to="/" />
+            </Route>
+          </Switch>
         )}
       </Container>
     </Router>
