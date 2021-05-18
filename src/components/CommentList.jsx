@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // import styled from 'styled-components';
-import { Comment, List, Popconfirm, Button, Form, Input } from 'antd';
+import { Comment, List, Popconfirm, Button, Form, Input, Avatar } from 'antd';
 import { commentService } from '../service/commentAPI.js';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 
@@ -9,6 +9,7 @@ const CommentList = ({
   fetchAllComments,
   fetchCommentsByQid,
   questionId,
+  userObj,
 }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editId, setEditId] = useState('1');
@@ -83,7 +84,16 @@ const CommentList = ({
           </Form>
         ) : (
           <>
-            <Comment author="admin" content={comment.body} />
+            <Comment
+              avatar={
+                <Avatar
+                  src={userObj.photoURL}
+                  alt={`${userObj.displayName}'s avatar`}
+                />
+              }
+              author={userObj.displayName}
+              content={comment.body}
+            />
             <Button onClick={() => openEditForm(comment)}>수정</Button>
             <Popconfirm
               title="정말 삭제하시겠습니까?"

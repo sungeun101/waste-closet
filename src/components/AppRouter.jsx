@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -12,9 +12,7 @@ import NotFound from '../pages/NotFound';
 import QnA from '../pages/QnA';
 import Navigation from './Navigation';
 
-const AppRouter = ({ isLoggedIn }) => {
-  const [adminLogin, setAdminLogin] = useState(false);
-
+const AppRouter = ({ isLoggedIn, userObj, setUserObj }) => {
   return (
     <Router>
       <GlobalStyle />
@@ -22,12 +20,12 @@ const AppRouter = ({ isLoggedIn }) => {
         {isLoggedIn ? (
           <Switch>
             <Route path="/" exact>
-              <Navigation setAdminLogin={setAdminLogin} />
+              <Navigation userObj={userObj} />
               <Home />
             </Route>
             <Route path="/qna">
-              <Navigation setAdminLogin={setAdminLogin} />
-              <QnA adminLogin={adminLogin} />
+              <Navigation userObj={userObj} />
+              <QnA userObj={userObj} />
             </Route>
             <Route>
               <NotFound />
@@ -36,7 +34,7 @@ const AppRouter = ({ isLoggedIn }) => {
         ) : (
           <Switch>
             <Route exact path="/">
-              <Auth setAdminLogin={setAdminLogin} />
+              <Auth userObj={userObj} setUserObj={setUserObj} />
             </Route>
             <Route>
               <Redirect to="/" />

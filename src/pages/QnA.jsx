@@ -17,8 +17,7 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 
-const QnA = ({ adminLogin }) => {
-  console.log(adminLogin);
+const QnA = ({ userObj }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -164,7 +163,7 @@ const QnA = ({ adminLogin }) => {
           <Button onClick={handleReload}>
             <ReloadOutlined />
           </Button>
-          {adminLogin && (
+          {userObj.displayName === '관리자' && (
             <StyledConfirm
               title="이 페이지를 삭제하시겠습니까?"
               onConfirm={deletePage}
@@ -187,7 +186,11 @@ const QnA = ({ adminLogin }) => {
           <Skeleton active />
         </>
       ) : questions.length > 0 ? (
-        <QuestionList questions={questions} fetchQuestions={fetchQuestions} />
+        <QuestionList
+          questions={questions}
+          fetchQuestions={fetchQuestions}
+          userObj={userObj}
+        />
       ) : (
         <div>검색 결과가 없습니다.</div>
       )}

@@ -24,7 +24,7 @@ const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
 `;
 
-const QuestionList = ({ questions, fetchQuestions }) => {
+const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   console.log('QuestionList');
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
@@ -170,6 +170,7 @@ const QuestionList = ({ questions, fetchQuestions }) => {
                   fetchAllComments={fetchAllComments}
                   fetchCommentsByQid={fetchCommentsByQid}
                   questionId={questionId}
+                  userObj={userObj}
                 />
               </>
             )}

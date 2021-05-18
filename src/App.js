@@ -5,20 +5,37 @@ import { authService } from 'service/firebase';
 
 function App() {
   const [init, setInit] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userObj, setUserObj] = useState(null);
 
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
-        setIsLoggedIn(true);
+        // console.log(user);
+        setUserObj({
+          uid: user.uid,
+          displayName:
+            user.displayName === null ? 'welcome' : userObj.displayName,
+          photoURL:
+            user.photoURL === null
+              ? 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+              : user.photoURL,
+        });
       } else {
-        setIsLoggedIn(false);
+        setUserObj(null);
       }
       setInit(true);
     });
   }, []);
 
-  return init ? <AppRouter isLoggedIn={isLoggedIn} /> : 'Initializing...';
+  return init ? (
+    <AppRouter
+      isLoggedIn={Boolean(userObj)}
+      userObj={userObj}
+      setUserObj={setUserObj}
+    />
+  ) : (
+    'Initializing...'
+  );
 }
 
 export default App;

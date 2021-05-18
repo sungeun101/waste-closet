@@ -15,6 +15,7 @@ const Comments = ({
   fetchCommentsByQid,
   addComment,
   questionId,
+  userObj,
 }) => {
   return (
     <CommentContainer>
@@ -28,6 +29,7 @@ const Comments = ({
               fetchAllComments={fetchAllComments}
               fetchCommentsByQid={fetchCommentsByQid}
               questionId={questionId}
+              userObj={userObj}
             />
           )}
           <Comment content={<CommentForm addComment={addComment} />} />

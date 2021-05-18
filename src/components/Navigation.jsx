@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Menu } from 'antd';
+import { Avatar, Button, Menu } from 'antd';
 import { FileSearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Link, useHistory } from 'react-router-dom';
 import { authService } from 'service/firebase';
 import styled from 'styled-components';
+import { showErrorMsg } from 'messages';
 
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
+const StyledAvatar = styled(Avatar)`
+  margin-right: 0.3rem;
+`;
+const LogoutBtn = styled(Button)`
+  margin-left: 1rem;
+`;
 
-const Navigation = ({ setAdminLogin }) => {
+const Navigation = ({ userObj }) => {
   const [current, setCurrent] = useState('');
 
   useEffect(() => {
@@ -24,10 +31,13 @@ const Navigation = ({ setAdminLogin }) => {
 
   const history = useHistory();
 
-  const onLogOutClick = () => {
-    authService.signOut();
+  const onLogOutClick = async () => {
+    try {
+      authService.signOut();
+    } catch (error) {
+      showErrorMsg(error.message);
+    }
     history.push('/');
-    setAdminLogin(false);
   };
 
   return (
@@ -40,7 +50,12 @@ const Navigation = ({ setAdminLogin }) => {
           <Link to="/qna">Q&amp;A</Link>
         </Menu.Item>
       </Menu>
-      <Button onClick={onLogOutClick}>Logout</Button>
+
+      <div>
+        <StyledAvatar src={userObj.photoURL} />
+        <span>{userObj.displayName}</span>
+        <LogoutBtn onClick={onLogOutClick}>Logout</LogoutBtn>
+      </div>
     </Nav>
   );
 };

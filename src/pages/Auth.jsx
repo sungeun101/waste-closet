@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { authService, firebaseInstance } from 'service/firebase';
-import { showErrorMsg } from 'messages';
+import { showErrorMsg, showSuccessMsg } from 'messages';
 
 const layout = {
   labelCol: {
@@ -18,7 +18,7 @@ const tailLayout = {
   },
 };
 
-const Auth = ({ setAdminLogin }) => {
+const Auth = ({ setUserObj, userObj }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newAccount, setNewAccount] = useState(true);
@@ -59,9 +59,19 @@ const Auth = ({ setAdminLogin }) => {
         provider = new firebaseInstance.auth.GithubAuthProvider();
       }
       const data = await authService.signInWithPopup(provider);
-      console.log(data);
+      console.log(data.user);
     } catch (error) {
-      showErrorMsg(error.message);
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        if (error.credential.providerId === 'github.com') {
+          provider = new firebaseInstance.auth.GoogleAuthProvider();
+          await authService.signInWithPopup(provider);
+          showSuccessMsg(
+            '동일한 이메일로 가입되어있어 Google 로그인 되었습니다.'
+          );
+        } else {
+          showErrorMsg(error.message);
+        }
+      }
     }
   };
 
@@ -73,18 +83,23 @@ const Auth = ({ setAdminLogin }) => {
         email,
         password
       );
-      console.log(data);
+      console.log(data.user);
     } catch (error) {
       showErrorMsg(error.message);
     }
-    setAdminLogin(true);
+    setUserObj({
+      ...userObj,
+      photoURL:
+        'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+      displayName: '관리자',
+    });
   };
 
   return (
     <>
       <div>
         <Button onClick={toggleAccount}>
-          {newAccount ? 'Sign In' : 'Create Account'}
+          {newAccount ? 'Login' : 'Sign Up'}
         </Button>
       </div>
 
@@ -134,7 +149,7 @@ const Auth = ({ setAdminLogin }) => {
 
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit">
-            {newAccount ? 'Create Account' : 'Log In'}
+            {newAccount ? 'Sign Up' : 'Login'}
           </Button>
         </Form.Item>
       </Form>
