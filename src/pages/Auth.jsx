@@ -77,20 +77,15 @@ const Auth = ({ setUserObj, userObj }) => {
 
   const handleAdminLogin = async () => {
     const email = 'admin-waste-closet@gmail.com';
-    const password = 'admin1019';
+    const password = 'admin-waste-closet';
     try {
-      const data = await authService.signInWithEmailAndPassword(
-        email,
-        password
-      );
-      console.log(data.user);
+      await authService.signInWithEmailAndPassword(email, password);
     } catch (error) {
       showErrorMsg(error.message);
     }
     setUserObj({
       ...userObj,
-      photoURL:
-        'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+      photoURL: `https://avatars.dicebear.com/api/bottts/admin.svg`,
       displayName: '관리자',
     });
   };

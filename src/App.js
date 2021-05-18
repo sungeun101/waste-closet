@@ -11,15 +11,27 @@ function App() {
     authService.onAuthStateChanged((user) => {
       if (user) {
         // console.log(user);
+        const emailStr = user.email;
+        const emailChars = emailStr.split(`@`);
         setUserObj({
           uid: user.uid,
           displayName:
-            user.displayName === null ? 'welcome' : userObj.displayName,
+            user.displayName === null ? emailChars[0] : user.displayName,
           photoURL:
             user.photoURL === null
-              ? 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+              ? `https://avatars.dicebear.com/api/jdenticon/${user.uid}.svg`
               : user.photoURL,
         });
+        if (user.photoURL === null) {
+          try {
+            const user = authService.currentUser;
+            user.updateProfile({
+              photoURL: `https://avatars.dicebear.com/api/jdenticon/${user.uid}.svg`,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
       } else {
         setUserObj(null);
       }
