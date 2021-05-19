@@ -10,7 +10,7 @@ function App() {
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
-        // console.log(user);
+        console.log(user);
         const emailStr = user.email;
         const emailChars = emailStr.split(`@`);
         setUserObj({

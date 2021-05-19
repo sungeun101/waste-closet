@@ -34,7 +34,7 @@ const AppRouter = ({ isLoggedIn, userObj, setUserObj }) => {
         ) : (
           <Switch>
             <Route exact path="/">
-              <Auth userObj={userObj} setUserObj={setUserObj} />
+              <Auth />
             </Route>
             <Route>
               <Redirect to="/" />

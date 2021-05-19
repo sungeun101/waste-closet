@@ -18,7 +18,7 @@ const tailLayout = {
   },
 };
 
-const Auth = ({ setUserObj, userObj }) => {
+const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newAccount, setNewAccount] = useState(true);
@@ -80,14 +80,14 @@ const Auth = ({ setUserObj, userObj }) => {
     const password = 'admin-waste-closet';
     try {
       await authService.signInWithEmailAndPassword(email, password);
+      // const user = authService.currentUser;
+      // user.updateProfile({
+      //   photoURL: `https://avatars.dicebear.com/api/bottts/admin.svg`,
+      //   displayName: '관리자',
+      // });
     } catch (error) {
       showErrorMsg(error.message);
     }
-    setUserObj({
-      ...userObj,
-      photoURL: `https://avatars.dicebear.com/api/bottts/admin.svg`,
-      displayName: '관리자',
-    });
   };
 
   return (

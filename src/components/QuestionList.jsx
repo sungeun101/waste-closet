@@ -7,6 +7,7 @@ import EditForm from './EditForm.jsx';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { commentService } from '../service/commentAPI.js';
 import { questionService } from '../service/config.js';
+import { projectFirestore } from 'service/firebase.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -25,7 +26,6 @@ const StyledConfirm = styled(Popconfirm)`
 `;
 
 const QuestionList = ({ questions, fetchQuestions, userObj }) => {
-  console.log('QuestionList');
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
@@ -56,6 +56,17 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
         questionId,
         body,
       });
+
+      try {
+        await projectFirestore.collection('comments').doc().set({
+          questionId,
+          userId: userObj.uid,
+          displayName: userObj.displayName,
+          photoURL: userObj.photoURL,
+        });
+      } catch (error) {
+        showErrorMsg(error.message);
+      }
     } catch (e) {
       showErrorMsg();
     }
