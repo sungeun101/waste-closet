@@ -3,9 +3,9 @@ import { baseURL } from './config';
 
 const endpoint = '/answers';
 
-// const getbyId = (id) => {
-//   return axios.get(baseURL + endpoint + '/' + id);
-// };
+const getbyId = (id) => {
+  return axios.get(baseURL + endpoint + '/' + id);
+};
 
 const getAll = (params) => {
   return axios.get(baseURL + endpoint, params);
@@ -24,7 +24,7 @@ const remove = (id) => {
 };
 
 export const commentService = {
-  // getbyId,
+  getbyId,
   getAll,
   add,
   update,

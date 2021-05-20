@@ -8,6 +8,8 @@ import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { commentService } from '../service/commentAPI.js';
 import { questionService } from '../service/config.js';
 import { projectFirestore } from 'service/firebase.js';
+import useFirestore from 'service/useFirestore.js';
+import { dbService } from 'service/firestoreConfig.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -30,71 +32,28 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
   const [comments, setComments] = useState([]);
-  const [commentsByQid, setCommentsByQid] = useState([]);
-  const [loading, setLoading] = useState([]);
 
-  const fetchAllComments = async () => {
-    try {
-      const response = await commentService.getAll({
-        params: { limit: 100 },
-      });
-      // console.log(response);
-      setComments(response.data.results);
-    } catch (e) {
-      showErrorMsg();
-    }
-  };
-
-  useEffect(() => {
-    fetchAllComments();
-  }, []);
-
-  const addComment = async (input) => {
-    const { body } = input;
-    try {
-      await commentService.add({
-        questionId,
-        body,
-      });
-
-      try {
-        await projectFirestore.collection('comments').doc().set({
-          questionId,
-          userId: userObj.uid,
-          displayName: userObj.displayName,
-          photoURL: userObj.photoURL,
-        });
-      } catch (error) {
-        showErrorMsg(error.message);
-      }
-    } catch (e) {
-      showErrorMsg();
-    }
-    await fetchCommentsByQid(questionId);
-    await fetchAllComments();
-    showSuccessMsg('작성되었습니다.');
-  };
-
-  const checkIfReplied = (id) => {
-    // console.log(id);
-    const idArr = comments.map((comment) => comment.questionId);
-    const set = new Set(idArr);
-    const uniqueArr = [...set];
-    // console.log(uniqueArr);
-    if (uniqueArr.includes(id)) {
-      return (
-        <>
-          <CheckCircleTwoTone
-            twoToneColor="#52c41a"
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-          />
-          <span>답변완료</span>
-        </>
-      );
-    }
-  };
+  // const checkIfReplied = (id) => {
+  //   // console.log(id);
+  //   // console.log(comments);
+  //   const idArr = comments.map((comment) => comment.questionId);
+  //   const set = new Set(idArr);
+  //   const uniqueArr = [...set];
+  //   // console.log(uniqueArr);
+  //   if (uniqueArr.includes(id)) {
+  //     return (
+  //       <>
+  //         <CheckCircleTwoTone
+  //           twoToneColor="#52c41a"
+  //           onClick={(event) => {
+  //             event.stopPropagation();
+  //           }}
+  //         />
+  //         <span>답변완료</span>
+  //       </>
+  //     );
+  //   }
+  // };
 
   const deleteQuestion = async (id) => {
     try {
@@ -111,24 +70,10 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     setShowEdit(true);
   };
 
-  const fetchCommentsByQid = async (questionId) => {
-    setLoading(true);
-    try {
-      const response = await commentService.getAll({
-        params: { questionId },
-      });
-      // console.log(response);
-      setCommentsByQid(response.data.results);
-    } catch (e) {
-      showErrorMsg();
-    }
-    setLoading(false);
-  };
-
   const handlePanelChange = (key) => {
     setShowEdit(false);
     setQuestionId(key);
-    fetchCommentsByQid(key);
+    // fetchCommentsByQid(key);
   };
 
   const showPanelHeader = (question) => {
@@ -148,7 +93,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
           <Panel
             key={question.id}
             header={showPanelHeader(question)}
-            extra={checkIfReplied(question.id)}
+            // extra={checkIfReplied(question.id)}
           >
             {showEdit ? (
               <EditForm
@@ -174,15 +119,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
                   </div>
                 </ContentContainer>
 
-                <Comments
-                  addComment={addComment}
-                  commentsByQid={commentsByQid}
-                  loading={loading}
-                  fetchAllComments={fetchAllComments}
-                  fetchCommentsByQid={fetchCommentsByQid}
-                  questionId={questionId}
-                  userObj={userObj}
-                />
+                <Comments questionId={questionId} userObj={userObj} />
               </>
             )}
           </Panel>
