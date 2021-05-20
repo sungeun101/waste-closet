@@ -4,6 +4,7 @@ import { Comment, List, Popconfirm, Button, Form, Input, Avatar } from 'antd';
 import { commentService } from '../service/commentAPI.js';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import useFirestore from 'service/useFirestore.js';
+import { dbService } from 'service/firestoreConfig.js';
 
 const CommentList = ({ docs, questionId, userObj }) => {
   const [showEdit, setShowEdit] = useState(false);
@@ -37,30 +38,15 @@ const CommentList = ({ docs, questionId, userObj }) => {
     showSuccessMsg('수정되었습니다.');
   };
 
-  const remove = async (id) => {
+  const removeComment = async (id) => {
     try {
-      await commentService.remove(id);
+      dbService.remove(id);
     } catch (e) {
       showErrorMsg();
+      console.log(e.message);
     }
-    // await deleteFromFirestore(id);
-    // await fetchCommentsByQid(questionId);
-    // await fetchAllComments();
     showSuccessMsg('삭제되었습니다.');
   };
-
-  // const deleteFromFirestore = async (id) => {
-  //   await projectFirestore
-  //     .collection('comments')
-  //     .doc(id)
-  //     .delete()
-  //     .then(() => {
-  //       console.log('Document successfully deleted!');
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error removing document: ', error);
-  //     });
-  // };
 
   return (
     docs.length > 0 && (
@@ -106,7 +92,7 @@ const CommentList = ({ docs, questionId, userObj }) => {
               <Button onClick={() => openEditForm(doc)}>수정</Button>
               <Popconfirm
                 title="정말 삭제하시겠습니까?"
-                onConfirm={() => remove(doc.id)}
+                onConfirm={() => removeComment(doc.id)}
                 okText="Yes"
                 cancelText="No"
               >
