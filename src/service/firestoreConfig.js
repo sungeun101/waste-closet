@@ -1,21 +1,21 @@
 import { projectFirestore } from './firebase';
 
-const db = projectFirestore.collection('/comments');
+const commentsRef = projectFirestore.collection('/comments');
 
 const getAll = () => {
-  return db;
+  return commentsRef;
 };
 
 const add = (comment) => {
-  return db.add(comment);
+  return commentsRef.add(comment);
 };
 
 const update = (id, value) => {
-  return db.doc(id).update(value);
+  return commentsRef.doc(id).update(value);
 };
 
 const remove = (id) => {
-  return db.doc(id).delete();
+  return commentsRef.doc(id).delete();
 };
 
 export const dbService = {

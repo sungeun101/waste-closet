@@ -1,46 +1,37 @@
 import React, { useState } from 'react';
 // import styled from 'styled-components';
 import { Comment, List, Popconfirm, Button, Form, Input, Avatar } from 'antd';
-import { commentService } from '../service/commentAPI.js';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
-import useFirestore from 'service/useFirestore.js';
 import { dbService } from 'service/firestoreConfig.js';
 
-const CommentList = ({ docs, questionId, userObj }) => {
+const CommentList = ({ comments }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editId, setEditId] = useState('1');
-  const [selectedComment, setSelectedComment] = useState({});
-  const { body } = selectedComment;
+  const [body, setBody] = useState({});
 
-  const openEditForm = (doc) => {
-    setSelectedComment(doc);
-    setEditId(doc.id);
+  const openEditForm = (comment) => {
+    setEditId(comment.id);
     setShowEdit(true);
   };
 
   const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedComment({
-      ...selectedComment,
-      [name]: value,
-    });
+    setBody(e.target.value);
   };
 
-  const update = async (id) => {
-    console.log(id);
+  const updateComment = (id) => {
     try {
-      await commentService.update(id, { body });
+      dbService.update(id, { body });
       setShowEdit(false);
     } catch (e) {
       showErrorMsg();
+      console.log(e.message);
     }
-    // await fetchCommentsByQid(questionId);
     showSuccessMsg('수정되었습니다.');
   };
 
   const removeComment = async (id) => {
     try {
-      dbService.remove(id);
+      await dbService.remove(id);
     } catch (e) {
       showErrorMsg();
       console.log(e.message);
@@ -49,14 +40,16 @@ const CommentList = ({ docs, questionId, userObj }) => {
   };
 
   return (
-    docs.length > 0 && (
+    comments.length > 0 && (
       <List
-        dataSource={docs}
-        header={`${docs.length} ${docs.length > 1 ? 'replies' : 'reply'}`}
+        dataSource={comments}
+        header={`${comments.length} ${
+          comments.length > 1 ? 'replies' : 'reply'
+        }`}
         itemLayout="horizontal"
-        renderItem={(doc) =>
-          editId === doc.id && showEdit ? (
-            <Form onFinish={() => update(doc.id)}>
+        renderItem={(comment) =>
+          editId === comment.id && showEdit ? (
+            <Form onFinish={() => updateComment(comment.id)}>
               <Form.Item
                 name="body"
                 rules={[
@@ -82,17 +75,17 @@ const CommentList = ({ docs, questionId, userObj }) => {
               <Comment
                 avatar={
                   <Avatar
-                    src={doc.photoURL}
-                    alt={`${doc.displayName}'s avatar`}
+                    src={comment.photoURL}
+                    alt={`${comment.displayName}'s avatar`}
                   />
                 }
-                author={doc.displayName}
-                content={doc.body}
+                author={comment.displayName}
+                content={comment.body}
               />
-              <Button onClick={() => openEditForm(doc)}>수정</Button>
+              <Button onClick={() => openEditForm(comment)}>수정</Button>
               <Popconfirm
                 title="정말 삭제하시겠습니까?"
-                onConfirm={() => removeComment(doc.id)}
+                onConfirm={() => removeComment(comment.id)}
                 okText="Yes"
                 cancelText="No"
               >

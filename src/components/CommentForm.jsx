@@ -11,8 +11,13 @@ const CommentForm = ({ addComment }) => {
     setValue(e.target.value);
   };
 
+  const handleSubmit = (input) => {
+    addComment(input);
+    form.resetFields();
+  };
+
   return (
-    <Form form={form} onFinish={addComment}>
+    <Form form={form} onFinish={handleSubmit}>
       <Form.Item
         name="body"
         rules={[
