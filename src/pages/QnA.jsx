@@ -149,16 +149,20 @@ const QnA = ({ userObj }) => {
         setSearchValue={setSearchValue}
       />
       <BtnContainer>
-        <Button type="primary" onClick={showModal}>
-          <EditOutlined />
-          질문하기
-        </Button>
-        <ModalForm
-          form={form}
-          visible={visible}
-          setVisible={setVisible}
-          addQuestion={addQuestion}
-        />
+        {userObj.displayName !== '관리자' && (
+          <>
+            <Button type="primary" onClick={showModal}>
+              <EditOutlined />
+              질문하기
+            </Button>
+            <ModalForm
+              form={form}
+              visible={visible}
+              setVisible={setVisible}
+              addQuestion={addQuestion}
+            />
+          </>
+        )}
         <div>
           <Button onClick={handleReload}>
             <ReloadOutlined />

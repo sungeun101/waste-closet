@@ -18,7 +18,7 @@ const remove = (id) => {
   return commentsRef.doc(id).delete();
 };
 
-export const dbService = {
+export const commentService = {
   getAll,
   add,
   update,

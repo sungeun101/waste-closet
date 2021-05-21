@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Popconfirm, Collapse, Tag } from 'antd';
-import { CheckCircleTwoTone } from '@ant-design/icons';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
-import { commentService } from '../service/commentAPI.js';
 import { questionService } from '../service/config.js';
-import { projectFirestore } from 'service/firebase.js';
-import useFirestore from 'service/useFirestore.js';
-import { dbService } from 'service/firestoreConfig.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;

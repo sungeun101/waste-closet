@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { Comment } from 'antd';
 import CommentForm from './CommentForm.jsx';
 import CommentList from './CommentList.jsx';
-import { dbService } from 'service/firestoreConfig.js';
 import { showErrorMsg, showSuccessMsg } from 'messages.js';
 import useFirestore from 'service/useFirestore.js';
+import { commentService } from 'service/firestoreConfig.js';
 
 const CommentContainer = styled.div`
   margin: 2.5rem;
@@ -26,7 +26,7 @@ const Comments = ({ questionId, userObj }) => {
         photoURL,
         timestamp: Date.now(),
       };
-      await dbService.add(commentObj);
+      await commentService.add(commentObj);
     } catch (e) {
       showErrorMsg();
       console.log(e.message);

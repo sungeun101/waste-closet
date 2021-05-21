@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import styled from 'styled-components';
 import { Comment, List, Popconfirm, Button, Form, Input, Avatar } from 'antd';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
-import { dbService } from 'service/firestoreConfig.js';
+import { commentService } from 'service/firestoreConfig.js';
 
 const CommentList = ({ comments }) => {
   const [showEdit, setShowEdit] = useState(false);
@@ -20,7 +20,7 @@ const CommentList = ({ comments }) => {
 
   const updateComment = (id) => {
     try {
-      dbService.update(id, { body });
+      commentService.update(id, { body });
       setShowEdit(false);
     } catch (e) {
       showErrorMsg();
@@ -31,7 +31,7 @@ const CommentList = ({ comments }) => {
 
   const removeComment = async (id) => {
     try {
-      await dbService.remove(id);
+      await commentService.remove(id);
     } catch (e) {
       showErrorMsg();
       console.log(e.message);

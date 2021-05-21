@@ -12,7 +12,7 @@ import NotFound from '../pages/NotFound';
 import QnA from '../pages/QnA';
 import Navigation from './Navigation';
 
-const AppRouter = ({ isLoggedIn, userObj, setUserObj }) => {
+const AppRouter = ({ isLoggedIn, userObj }) => {
   return (
     <Router>
       <GlobalStyle />
