@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Popconfirm, Collapse, Tag } from 'antd';
+import { Button, Popconfirm, Collapse, Tag, Badge } from 'antd';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { questionService } from '../service/config.js';
+import { CheckCircleTwoTone } from '@ant-design/icons';
+import { commentService } from 'service/firestoreConfig.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -26,29 +28,40 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
-  const [comments, setComments] = useState([]);
+  const [docQid, setDocQid] = useState([]);
 
-  // const checkIfReplied = (id) => {
-  //   // console.log(id);
-  //   // console.log(comments);
-  //   const idArr = comments.map((comment) => comment.questionId);
-  //   const set = new Set(idArr);
-  //   const uniqueArr = [...set];
-  //   // console.log(uniqueArr);
-  //   if (uniqueArr.includes(id)) {
-  //     return (
-  //       <>
-  //         <CheckCircleTwoTone
-  //           twoToneColor="#52c41a"
-  //           onClick={(event) => {
-  //             event.stopPropagation();
-  //           }}
-  //         />
-  //         <span>답변완료</span>
-  //       </>
-  //     );
-  //   }
-  // };
+  const getDoumentQuestionId = () => {
+    const arr = [];
+    commentService.commentsRef.onSnapshot((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const id = doc.data().questionId;
+        arr.push(id);
+        const uniqueArr = Array.from(new Set(arr));
+        // console.log(set);
+        setDocQid(uniqueArr);
+      });
+    });
+  };
+
+  useEffect(() => {
+    getDoumentQuestionId();
+  }, []);
+
+  const showCommentCount = (id) => {
+    if (docQid.includes(id)) {
+      return (
+        <>
+          <CheckCircleTwoTone
+            twoToneColor="#52c41a"
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          />
+          <span>답변완료</span>
+        </>
+      );
+    }
+  };
 
   const deleteQuestion = async (id) => {
     try {
@@ -88,7 +101,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
           <Panel
             key={question.id}
             header={showPanelHeader(question)}
-            // extra={checkIfReplied(question.id)}
+            extra={showCommentCount(question.id)}
           >
             {showEdit ? (
               <EditForm

@@ -2,10 +2,6 @@ import { projectFirestore } from './firebase';
 
 const commentsRef = projectFirestore.collection('/comments');
 
-const getAll = () => {
-  return commentsRef;
-};
-
 const add = (comment) => {
   return commentsRef.add(comment);
 };
@@ -19,7 +15,7 @@ const remove = (id) => {
 };
 
 export const commentService = {
-  getAll,
+  commentsRef,
   add,
   update,
   remove,

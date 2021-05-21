@@ -13,7 +13,7 @@ const CommentContainer = styled.div`
 
 const Comments = ({ questionId, userObj }) => {
   const { displayName, photoURL } = userObj;
-  const { docs } = useFirestore('comments', questionId);
+  const { docs } = useFirestore(questionId);
   // console.log(docs);
 
   const addComment = async (input) => {
