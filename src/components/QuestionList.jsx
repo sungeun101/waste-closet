@@ -7,6 +7,7 @@ import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { questionService } from '../service/config.js';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { commentService } from 'service/firestoreConfig.js';
+import useFirestore from 'service/useFirestore.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -28,26 +29,58 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
-  const [docQid, setDocQid] = useState([]);
+  const [docs, setDocs] = useState([]);
+  // const [docQid, setDocQid] = useState([]);
+  // const [docsHaveAdmin, setDocsHavAdmin] = useState([]);
 
-  const getDoumentQuestionId = () => {
-    const arr = [];
+  const getAllDouments = () => {
+    let arr = [];
     commentService.commentsRef.onSnapshot((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        const id = doc.data().questionId;
+        let id = doc.data();
         arr.push(id);
-        const uniqueArr = Array.from(new Set(arr));
-        // console.log(set);
-        setDocQid(uniqueArr);
       });
+      setDocs(arr);
     });
   };
+  // const getDoumentQuestionId = () => {
+  //   let arr = [];
+  //   commentService.commentsRef.onSnapshot((querySnapshot) => {
+  //     querySnapshot.forEach((doc) => {
+  //       let id = doc.data().questionId;
+  //       arr.push(id);
+  //     });
+  //     let uniqueArr = Array.from(new Set(arr));
+  //     setDocQid(uniqueArr);
+  //   });
+  // };
+
+  // const getDocsHaveAdmin = () => {
+  //   let arr = [];
+  //   commentService.commentsRef
+  //     .where('displayName', '==', '관리자')
+  //     .onSnapshot((querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         let docs = doc.data().questionId;
+  //         arr.push(docs);
+  //       });
+  //       let uniqueArr = Array.from(new Set(arr));
+  //       setDocsHavAdmin(uniqueArr);
+  //     });
+  // };
 
   useEffect(() => {
-    getDoumentQuestionId();
+    getAllDouments();
+    // getDoumentQuestionId();
+    // getDocsHaveAdmin();
   }, []);
+  console.log(docs);
+  // console.log(docsHaveAdmin);
 
-  const showCommentCount = (id) => {
+  const checkIfAdminReplied = (id) => {
+    const docsHaveAdmin = docs.filter((doc) => doc.displayName === '관리자');
+    console.log(docsHaveAdmin);
+    const docQid = docsHaveAdmin.map((doc) => doc.questionId);
     if (docQid.includes(id)) {
       return (
         <>
@@ -61,6 +94,16 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
         </>
       );
     }
+  };
+
+  const showCommentCount = (id) => {
+    // if (docQid.includes(id)) {
+    //   return (
+    //     <>
+    //
+    //     </>
+    //   );
+    // }
   };
 
   const deleteQuestion = async (id) => {
@@ -81,7 +124,6 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const handlePanelChange = (key) => {
     setShowEdit(false);
     setQuestionId(key);
-    // fetchCommentsByQid(key);
   };
 
   const showPanelHeader = (question) => {
@@ -101,7 +143,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
           <Panel
             key={question.id}
             header={showPanelHeader(question)}
-            extra={showCommentCount(question.id)}
+            extra={checkIfAdminReplied(question.id)}
           >
             {showEdit ? (
               <EditForm
