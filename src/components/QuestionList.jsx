@@ -5,7 +5,7 @@ import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { questionService } from '../service/config.js';
-import { CheckCircleTwoTone } from '@ant-design/icons';
+import { ArrowUpOutlined, CheckCircleTwoTone } from '@ant-design/icons';
 import { commentService } from 'service/firestoreConfig.js';
 import useFirestore from 'service/useFirestore.js';
 const { Panel } = Collapse;
@@ -30,57 +30,43 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
   const [docs, setDocs] = useState([]);
-  // const [docQid, setDocQid] = useState([]);
-  // const [docsHaveAdmin, setDocsHavAdmin] = useState([]);
 
   const getAllDouments = () => {
     let arr = [];
-    commentService.commentsRef.onSnapshot((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        let id = doc.data();
-        arr.push(id);
+    commentService.commentsRef
+      .where('displayName', '==', '관리자')
+      .onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            console.log('New : ', change.doc.data());
+            arr.push({ ...change.doc.data(), id: change.doc.id });
+          }
+          if (change.type === 'modified') {
+            console.log('Modified : ', change.doc.data());
+            arr.push({ ...change.doc.data(), id: change.doc.id });
+          }
+          if (change.type === 'removed') {
+            console.log('Removed : ', change.doc.data());
+            const index = arr.indexOf(change.doc.data());
+            arr.splice(index, 1);
+          }
+        });
+        let filteredArr = arr.filter(
+          (docs, index, callback) =>
+            index === callback.findIndex((element) => element.id === docs.id)
+        );
+        setDocs(filteredArr);
       });
-      setDocs(arr);
-    });
   };
-  // const getDoumentQuestionId = () => {
-  //   let arr = [];
-  //   commentService.commentsRef.onSnapshot((querySnapshot) => {
-  //     querySnapshot.forEach((doc) => {
-  //       let id = doc.data().questionId;
-  //       arr.push(id);
-  //     });
-  //     let uniqueArr = Array.from(new Set(arr));
-  //     setDocQid(uniqueArr);
-  //   });
-  // };
-
-  // const getDocsHaveAdmin = () => {
-  //   let arr = [];
-  //   commentService.commentsRef
-  //     .where('displayName', '==', '관리자')
-  //     .onSnapshot((querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         let docs = doc.data().questionId;
-  //         arr.push(docs);
-  //       });
-  //       let uniqueArr = Array.from(new Set(arr));
-  //       setDocsHavAdmin(uniqueArr);
-  //     });
-  // };
 
   useEffect(() => {
     getAllDouments();
-    // getDoumentQuestionId();
-    // getDocsHaveAdmin();
   }, []);
   console.log(docs);
-  // console.log(docsHaveAdmin);
 
   const checkIfAdminReplied = (id) => {
-    const docsHaveAdmin = docs.filter((doc) => doc.displayName === '관리자');
-    console.log(docsHaveAdmin);
-    const docQid = docsHaveAdmin.map((doc) => doc.questionId);
+    const docQid = docs.map((doc) => doc.questionId);
+    console.log(docQid);
     if (docQid.includes(id)) {
       return (
         <>
