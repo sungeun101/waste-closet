@@ -8,7 +8,7 @@ import useFirestore from 'service/useFirestore.js';
 import { commentService } from 'service/firestoreConfig.js';
 
 const CommentContainer = styled.div`
-  margin: 2.5rem;
+  margin: clamp(1.8rem, 2.5vw, 2.8rem);
 `;
 
 const Comments = ({ questionId, userObj }) => {
@@ -36,7 +36,7 @@ const Comments = ({ questionId, userObj }) => {
 
   return (
     <CommentContainer>
-      {docs && <CommentList comments={docs} />}
+      {docs && <CommentList comments={docs} userObj={userObj} />}
       <Comment content={<CommentForm addComment={addComment} />} />
     </CommentContainer>
   );

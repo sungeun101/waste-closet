@@ -12,13 +12,15 @@ const { Panel } = Collapse;
 const StyledCollapse = styled(Collapse)``;
 const ContentContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding-left: 1.5rem;
+  flex-direction: column;
+  padding: 0 2rem;
 `;
 const Content = styled.div`
+  padding: 2rem;
+`;
+const BtnContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-end;
 `;
 const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
@@ -37,7 +39,6 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
         if (change.type === 'added') {
           arr.push({ ...change.doc.data(), id: change.doc.id });
         }
-        // }
         if (change.type === 'removed') {
           const index = arr.indexOf(change.doc.data());
           arr.splice(index, 1);
@@ -130,8 +131,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
             ) : (
               <>
                 <ContentContainer>
-                  <Content>{question.body}</Content>
-                  <div>
+                  <BtnContainer>
                     <Button onClick={() => openEditForm(question)}>수정</Button>
                     <StyledConfirm
                       title="정말 삭제하시겠습니까?"
@@ -141,7 +141,8 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
                     >
                       <Button>삭제</Button>
                     </StyledConfirm>
-                  </div>
+                  </BtnContainer>
+                  <Content>{question.body}</Content>
                 </ContentContainer>
 
                 <Comments questionId={questionId} userObj={userObj} />
