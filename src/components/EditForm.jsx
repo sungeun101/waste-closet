@@ -43,11 +43,34 @@ const EditForm = ({
         setCategory={setCategory}
         selectedOption={getSelectedOption}
       />
-      <Form.Item>
-        <Input name="title" value={title} onChange={handleEditChange} />
+      <Form.Item
+        rules={[
+          {
+            required: true,
+            message: '제목을 입력해주세요.',
+          },
+        ]}
+        help="제목은 60자 이내로 입력해주세요."
+      >
+        <Input
+          name="title"
+          value={title}
+          onChange={handleEditChange}
+          maxLength={60}
+        />
       </Form.Item>
       <Form.Item>
-        <Input.TextArea name="body" value={body} onChange={handleEditChange} />
+        <Input.TextArea
+          name="body"
+          rules={[
+            {
+              required: true,
+              message: '내용을 입력해주세요.',
+            },
+          ]}
+          value={body}
+          onChange={handleEditChange}
+        />
       </Form.Item>
       <Form.Item>
         <Button type="default" htmlType="submit">

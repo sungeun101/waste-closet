@@ -44,8 +44,9 @@ const AddForm = ({ form, addQuestion, category, setCategory }) => {
               message: '제목을 입력해주세요.',
             },
           ]}
+          help="제목은 60자 이내로 입력해주세요."
         >
-          <Input placeholder="제목" />
+          <Input placeholder="제목" maxLength={60} />
         </StyledItem>
         <StyledItem
           name="body"
