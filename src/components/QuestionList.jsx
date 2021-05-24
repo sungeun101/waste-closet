@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Popconfirm, Collapse, Tag, Badge } from 'antd';
+import { Button, Popconfirm, Collapse, Tag } from 'antd';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { questionService } from '../service/config.js';
-import { ArrowUpOutlined, CheckCircleTwoTone } from '@ant-design/icons';
+import { CheckCircleTwoTone, CommentOutlined } from '@ant-design/icons';
 import { commentService } from 'service/firestoreConfig.js';
-import useFirestore from 'service/useFirestore.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -33,40 +32,32 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
 
   const getAllDouments = () => {
     let arr = [];
-    commentService.commentsRef
-      .where('displayName', '==', '관리자')
-      .onSnapshot((snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === 'added') {
-            console.log('New : ', change.doc.data());
-            arr.push({ ...change.doc.data(), id: change.doc.id });
-          }
-          if (change.type === 'modified') {
-            console.log('Modified : ', change.doc.data());
-            arr.push({ ...change.doc.data(), id: change.doc.id });
-          }
-          if (change.type === 'removed') {
-            console.log('Removed : ', change.doc.data());
-            const index = arr.indexOf(change.doc.data());
-            arr.splice(index, 1);
-          }
-        });
-        let filteredArr = arr.filter(
-          (docs, index, callback) =>
-            index === callback.findIndex((element) => element.id === docs.id)
-        );
-        setDocs(filteredArr);
+    commentService.commentsRef.onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          arr.push({ ...change.doc.data(), id: change.doc.id });
+        }
+        // }
+        if (change.type === 'removed') {
+          const index = arr.indexOf(change.doc.data());
+          arr.splice(index, 1);
+        }
       });
+      let filteredArr = arr.filter(
+        (docs, index, callback) =>
+          index === callback.findIndex((element) => element.id === docs.id)
+      );
+      setDocs(filteredArr);
+    });
   };
 
   useEffect(() => {
     getAllDouments();
   }, []);
-  console.log(docs);
 
   const checkIfAdminReplied = (id) => {
-    const docQid = docs.map((doc) => doc.questionId);
-    console.log(docQid);
+    const adminDocs = docs.filter((doc) => doc.displayName === '관리자');
+    const docQid = adminDocs.map((doc) => doc.questionId);
     if (docQid.includes(id)) {
       return (
         <>
@@ -75,21 +66,11 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
             onClick={(event) => {
               event.stopPropagation();
             }}
-          />
+          />{' '}
           <span>답변완료</span>
         </>
       );
     }
-  };
-
-  const showCommentCount = (id) => {
-    // if (docQid.includes(id)) {
-    //   return (
-    //     <>
-    //
-    //     </>
-    //   );
-    // }
   };
 
   const deleteQuestion = async (id) => {
@@ -113,11 +94,19 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   };
 
   const showPanelHeader = (question) => {
-    const { category, title } = question;
+    const { category, title, id } = question;
+    const commentsByQid = docs.filter((doc) => doc.questionId === id);
     return (
       <>
         {category && <Tag color="#87d068">{category}</Tag>}
-        <span>{title}</span>
+        <span>{title}</span>{' '}
+        {commentsByQid.length > 0 && (
+          <span style={{ color: '#a0a0a0' }}>
+            <CommentOutlined />
+            {commentsByQid.length}{' '}
+            {commentsByQid.length > 1 ? 'replies' : 'reply'}
+          </span>
+        )}
       </>
     );
   };
