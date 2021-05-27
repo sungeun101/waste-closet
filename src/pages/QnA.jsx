@@ -9,13 +9,15 @@ import {
   StyledPagination,
 } from './QnA.elements';
 import QuestionList from '../components/QuestionList';
-import { questionService } from '../service/config';
 import { showSuccessMsg, showErrorMsg } from '../messages';
 import {
   DeleteOutlined,
   ReloadOutlined,
   EditOutlined,
 } from '@ant-design/icons';
+import { questionService } from 'service/config';
+import { commentService } from 'service/firebase/firestoreComments';
+import useFirestore from 'service/firebase/useFirestore';
 
 const QnA = ({ userObj }) => {
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,6 @@ const QnA = ({ userObj }) => {
       const response = await questionService.getAll({
         params: { page, sortBy: 'createdAt:desc' },
       });
-      // console.log(response);
       setQuestions(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
@@ -49,16 +50,33 @@ const QnA = ({ userObj }) => {
   }, [currentPageNumber]);
 
   const addQuestion = async (values) => {
-    // console.log(values);
     try {
       await questionService.add(values);
     } catch (e) {
       showErrorMsg();
+      console.log(e.message);
     }
     setVisible(false);
     await fetchQuestions();
     showSuccessMsg('질문이 작성되었습니다');
   };
+
+  // questions.forEach((question) => comment(question.id));
+  // const getAllCommentsId =()=>{
+  // commentsRef
+  //   .where('capital', '==', true)
+  //   .get()
+  //   .then((querySnapshot) => {
+  //     querySnapshot.forEach((doc) => {
+  //       // doc.data() is never undefined for query doc snapshots
+  //       console.log(doc.id, ' => ', doc.data());
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     console.log('Error getting documents: ', error);
+  //   });
+
+  // }
 
   const deletePage = async () => {
     setLoading(true);
@@ -68,6 +86,7 @@ const QnA = ({ userObj }) => {
       }
     } catch (e) {
       showErrorMsg();
+      console.log(e.message);
     }
     setLoading(false);
     if (currentPageNumber > 1) {

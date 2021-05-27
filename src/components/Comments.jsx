@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Comment } from 'antd';
 import CommentForm from './CommentForm.jsx';
 import CommentList from './CommentList.jsx';
 import { showErrorMsg, showSuccessMsg } from 'messages.js';
-import useFirestore from 'service/useFirestore.js';
-import { commentService } from 'service/firestoreConfig.js';
+import useFirestore from 'service/firebase/useFirestore.js';
+import { commentService } from 'service/firebase/firestoreComments.js';
 
 const CommentContainer = styled.div`
   margin: clamp(1.8rem, 2.5vw, 2.8rem);
 `;
 
 const Comments = ({ questionId, userObj }) => {
-  const { displayName, photoURL } = userObj;
+  const { email, displayName, photoURL } = userObj;
   const { docs } = useFirestore(questionId);
   // console.log(docs);
 
@@ -22,6 +22,7 @@ const Comments = ({ questionId, userObj }) => {
       const commentObj = {
         questionId,
         body,
+        email,
         displayName,
         photoURL,
         timestamp: Date.now(),

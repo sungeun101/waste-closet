@@ -11,7 +11,7 @@ import {
   // Tooltip,
 } from 'antd';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
-import { commentService } from 'service/firestoreConfig.js';
+import { commentService } from 'service/firebase/firestoreComments.js';
 // import moment from 'moment';
 
 const StyledList = styled(List)``;
@@ -25,7 +25,9 @@ const CommentContainer = styled.div`
     flex-direction: column;
   }
 `;
-const StyledComment = styled(Comment)``;
+const StyledComment = styled(Comment)`
+  margin-right: 0.8rem;
+`;
 const BtnContainer = styled.div`
   display: flex;
   padding-top: 2rem;
@@ -61,7 +63,7 @@ const CommentList = ({ comments, userObj }) => {
     showSuccessMsg('수정되었습니다.');
   };
 
-  const removeComment = async (id) => {
+  const deleteComment = async (id) => {
     try {
       await commentService.remove(id);
     } catch (e) {
@@ -119,14 +121,14 @@ const CommentList = ({ comments, userObj }) => {
                 //   </Tooltip>
                 // }
               />
-              {comment.displayName === userObj.displayName && (
+              {comment.email === userObj.email && (
                 <BtnContainer>
                   <Button type="link" onClick={() => openEditForm(comment)}>
                     수정
                   </Button>
                   <Popconfirm
                     title="정말 삭제하시겠습니까?"
-                    onConfirm={() => removeComment(comment.id)}
+                    onConfirm={() => deleteComment(comment.id)}
                     okText="Yes"
                     cancelText="No"
                   >

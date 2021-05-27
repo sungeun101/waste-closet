@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import AppRouter from 'components/AppRouter';
-import { authService } from 'service/firebase';
+import { authService } from 'service/firebase/firebase';
 
 function App() {
   const [init, setInit] = useState(false);
@@ -15,6 +15,7 @@ function App() {
         const emailChars = emailStr.split(`@`);
         setUserObj({
           uid: user.uid,
+          email: user.email,
           displayName:
             user.displayName === null ? emailChars[0] : user.displayName,
           photoURL:

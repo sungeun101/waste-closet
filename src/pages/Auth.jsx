@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
-import { authService, firebaseInstance } from 'service/firebase';
 import { showErrorMsg, showSuccessMsg } from 'messages';
+import { authService, firebaseInstance } from 'service/firebase/firebase';
 
 const layout = {
   labelCol: {

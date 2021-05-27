@@ -3,10 +3,13 @@ import styled from 'styled-components';
 import { Button, Popconfirm, Collapse, Tag } from 'antd';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
-import { showSuccessMsg, showErrorMsg } from '../messages.js';
-import { questionService } from '../service/config.js';
 import { CheckCircleTwoTone, CommentOutlined } from '@ant-design/icons';
-import { commentService } from 'service/firestoreConfig.js';
+import { showSuccessMsg, showErrorMsg } from '../messages.js';
+import {
+  commentService,
+  commentsRef,
+} from 'service/firebase/firestoreComments.js';
+import { questionService } from 'service/config.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
@@ -25,6 +28,25 @@ const BtnContainer = styled.div`
 const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
 `;
+const CommentCount = styled.span`
+  display: inline-block;
+  margin-left: 0.5rem;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+const AdminReplied = styled.span`
+  @media screen and (max-width: 48rem) {
+    display: none;
+  }
+`;
+const ReplyText = styled.span`
+  @media screen and (max-width: 48rem) {
+    display: none;
+  }
+`;
 
 const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const [showEdit, setShowEdit] = useState(false);
@@ -32,9 +54,13 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const [questionId, setQuestionId] = useState('');
   const [docs, setDocs] = useState([]);
 
-  const getAllDouments = () => {
+  useEffect(() => {
+    handleFirestoreComments();
+  }, []);
+
+  const handleFirestoreComments = () => {
     let arr = [];
-    commentService.commentsRef.onSnapshot((snapshot) => {
+    commentsRef.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           arr.push({ ...change.doc.data(), id: change.doc.id });
@@ -52,10 +78,6 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     });
   };
 
-  useEffect(() => {
-    getAllDouments();
-  }, []);
-
   const checkIfAdminReplied = (id) => {
     const adminDocs = docs.filter((doc) => doc.displayName === '관리자');
     const docQid = adminDocs.map((doc) => doc.questionId);
@@ -68,7 +90,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
               event.stopPropagation();
             }}
           />{' '}
-          <span>답변완료</span>
+          <AdminReplied>답변완료</AdminReplied>
         </>
       );
     }
@@ -77,6 +99,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const deleteQuestion = async (id) => {
     try {
       await questionService.remove(id);
+      commentService.remove(id);
     } catch (e) {
       showErrorMsg();
     }
@@ -89,7 +112,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     setShowEdit(true);
   };
 
-  const handlePanelChange = (key) => {
+  const handlePanelChange = async (key) => {
     setShowEdit(false);
     setQuestionId(key);
   };
@@ -100,13 +123,15 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     return (
       <>
         {category && <Tag color="#87d068">{category}</Tag>}
-        <span>{title}</span>{' '}
+        <span>{title}</span>
         {commentsByQid.length > 0 && (
-          <span style={{ color: '#a0a0a0' }}>
+          <CommentCount>
             <CommentOutlined />
             {commentsByQid.length}{' '}
-            {commentsByQid.length > 1 ? 'replies' : 'reply'}
-          </span>
+            <ReplyText>
+              {commentsByQid.length > 1 ? 'replies' : 'reply'}
+            </ReplyText>
+          </CommentCount>
         )}
       </>
     );

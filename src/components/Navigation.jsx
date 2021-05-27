@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Avatar, Button, Menu } from 'antd';
 import { FileSearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { showErrorMsg } from 'messages';
-import { authService } from 'service/firebase';
+import { authService } from 'service/firebase/firebase';
 
 const Nav = styled.nav`
   display: flex;
