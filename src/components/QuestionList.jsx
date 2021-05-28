@@ -13,6 +13,19 @@ import { questionService } from 'service/config.js';
 const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
+const StyledPanel = styled(Panel)``;
+const PanelHeader = styled.span`
+  background: pink;
+`;
+const Title = styled.span`
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 60%;
+  position: relative;
+  top: 5px;
+`;
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -121,9 +134,9 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     const { category, title, id } = question;
     const commentsByQid = docs.filter((doc) => doc.questionId === id);
     return (
-      <>
+      <PanelHeader>
         {category && <Tag color="#87d068">{category}</Tag>}
-        <span>{title}</span>
+        <Title>{title}</Title>
         {commentsByQid.length > 0 && (
           <CommentCount>
             <CommentOutlined />
@@ -133,7 +146,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
             </ReplyText>
           </CommentCount>
         )}
-      </>
+      </PanelHeader>
     );
   };
 
@@ -141,7 +154,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     <StyledCollapse accordion onChange={handlePanelChange}>
       {questions.map((question) => (
         <>
-          <Panel
+          <StyledPanel
             key={question.id}
             header={showPanelHeader(question)}
             extra={checkIfAdminReplied(question.id)}
@@ -173,7 +186,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
                 <Comments questionId={questionId} userObj={userObj} />
               </>
             )}
-          </Panel>
+          </StyledPanel>
         </>
       ))}
     </StyledCollapse>
