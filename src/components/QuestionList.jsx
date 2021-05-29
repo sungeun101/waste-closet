@@ -14,9 +14,7 @@ const { Panel } = Collapse;
 
 const StyledCollapse = styled(Collapse)``;
 const StyledPanel = styled(Panel)``;
-const PanelHeader = styled.span`
-  background: pink;
-`;
+const PanelHeader = styled.span``;
 const Title = styled.span`
   display: inline-block;
   text-overflow: ellipsis;
