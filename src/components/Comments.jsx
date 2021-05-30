@@ -6,6 +6,7 @@ import CommentList from './CommentList.jsx';
 import { showErrorMsg, showSuccessMsg } from 'messages.js';
 import useFirestore from 'service/firebase/useFirestore.js';
 import { commentService } from 'service/firebase/firestoreComments.js';
+import moment from 'moment';
 
 const CommentContainer = styled.div`
   margin: clamp(1.8rem, 2.5vw, 2.8rem);
@@ -25,7 +26,7 @@ const Comments = ({ questionId, userObj }) => {
         email,
         displayName,
         photoURL,
-        timestamp: Date.now(),
+        timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
       };
       await commentService.add(commentObj);
     } catch (e) {

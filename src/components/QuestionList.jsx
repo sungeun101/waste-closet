@@ -168,6 +168,7 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
               <>
                 <ContentContainer>
                   <BtnContainer>
+                    <span>{question.createdAt}</span>
                     <Button onClick={() => openEditForm(question)}>수정</Button>
                     <StyledConfirm
                       title="정말 삭제하시겠습니까?"

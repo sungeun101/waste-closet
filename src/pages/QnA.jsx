@@ -39,6 +39,7 @@ const QnA = ({ userObj }) => {
       const response = await questionService.getAll({
         params: { page, sortBy: 'createdAt:desc' },
       });
+      console.log(response);
       setQuestions(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
@@ -46,11 +47,34 @@ const QnA = ({ userObj }) => {
     }
     setLoading(false);
   };
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     fetchQuestions();
-    getAllQuestionId();
   }, [currentPageNumber]);
+  // useEffect(() => {
+  //   fun();
+  // });
+
+  // const fun = () => {
+  //   let arr = [];
+  //   questions.forEach((question) => {
+  //     commentsRef
+  //       .where('questionId', '==', question.id)
+  //       .get()
+  //       .then((querySnapshot) => {
+  //         querySnapshot.forEach((doc) => {
+  //           console.log(doc.id, ' => ', doc.data());
+  //           arr.push({ ...doc.data(), id: doc.id });
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.log('Error getting documents: ', error);
+  //       });
+  //   });
+  //   setComments(arr);
+  //   console.log(comments);
+  // };
 
   const addQuestion = async (values) => {
     try {
@@ -64,36 +88,15 @@ const QnA = ({ userObj }) => {
     showSuccessMsg('질문이 작성되었습니다');
   };
 
-  const [allQuestionId, setAllQuestionId] = useState([]);
-
-  const getAllQuestionId = () => {
-    questions.forEach((question) => {
-      let arr = [];
-      commentsRef
-        .where('questionId', '==', question.id)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            console.log(doc.id, ' => ', doc.data().questionId);
-            arr = doc.data().questionId;
-            setAllQuestionId(arr);
-          });
-        })
-        .catch((error) => {
-          console.log('Error getting documents: ', error);
-        });
-    });
-  };
-
   const deletePage = async () => {
     setLoading(true);
     try {
       for await (const question of questions) {
         await questionService.remove(question.id);
       }
-      for await (const id of allQuestionId) {
-        await questionService.remove(id);
-      }
+      // for await (const comment of comments) {
+      //   await commentService.remove(comment.id);
+      // }
       await commentService.remove();
     } catch (e) {
       showErrorMsg();

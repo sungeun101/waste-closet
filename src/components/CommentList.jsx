@@ -8,11 +8,11 @@ import {
   Form,
   Input,
   Avatar,
-  // Tooltip,
+  Tooltip,
 } from 'antd';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { commentService } from 'service/firebase/firestoreComments.js';
-// import moment from 'moment';
+import moment from 'moment';
 
 const StyledList = styled(List)``;
 const CommentContainer = styled.div`
@@ -115,11 +115,11 @@ const CommentList = ({ comments, userObj }) => {
                 }
                 author={comment.displayName}
                 content={comment.body}
-                // datetime={
-                //   <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                //     <span>{moment().fromNow()}</span>
-                //   </Tooltip>
-                // }
+                datetime={
+                  <Tooltip title={comment.timestamp}>
+                    <span>{moment().fromNow()}</span>
+                  </Tooltip>
+                }
               />
               {comment.email === userObj.email && (
                 <BtnContainer>
