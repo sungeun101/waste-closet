@@ -21,7 +21,11 @@ const AddForm = ({ form, addQuestion, category, setCategory }) => {
 
   const handleSubmit = (values) => {
     const { title, body } = values;
-    addQuestion({ category: selectedOption, title, body });
+    addQuestion({
+      category: selectedOption,
+      title,
+      body,
+    });
     setSelectedOption('');
   };
   const getSelectedOption = (value) => {

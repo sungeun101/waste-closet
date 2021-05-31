@@ -30,7 +30,16 @@ const QnA = ({ userObj }) => {
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState('# 분류별 검색');
   const [searchValue, setSearchValue] = useState('');
+  const [comments, setComments] = useState([]);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    fetchQuestions();
+  }, [currentPageNumber]);
+
+  useEffect(() => {
+    handleFirestoreComments();
+  }, []);
 
   const fetchQuestions = async (page = currentPageNumber) => {
     setError(null);
@@ -39,7 +48,7 @@ const QnA = ({ userObj }) => {
       const response = await questionService.getAll({
         params: { page, sortBy: 'createdAt:desc' },
       });
-      console.log(response);
+      // console.log(response);
       setQuestions(response.data.results);
       setTotalResults(response.data.totalResults);
     } catch (e) {
@@ -47,34 +56,26 @@ const QnA = ({ userObj }) => {
     }
     setLoading(false);
   };
-  const [comments, setComments] = useState([]);
 
-  useEffect(() => {
-    fetchQuestions();
-  }, [currentPageNumber]);
-  // useEffect(() => {
-  //   fun();
-  // });
-
-  // const fun = () => {
-  //   let arr = [];
-  //   questions.forEach((question) => {
-  //     commentsRef
-  //       .where('questionId', '==', question.id)
-  //       .get()
-  //       .then((querySnapshot) => {
-  //         querySnapshot.forEach((doc) => {
-  //           console.log(doc.id, ' => ', doc.data());
-  //           arr.push({ ...doc.data(), id: doc.id });
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.log('Error getting documents: ', error);
-  //       });
-  //   });
-  //   setComments(arr);
-  //   console.log(comments);
-  // };
+  const handleFirestoreComments = () => {
+    let arr = [];
+    commentsRef.onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          arr.push({ ...change.doc.data(), id: change.doc.id });
+        }
+        if (change.type === 'removed') {
+          const index = arr.indexOf(change.doc.data());
+          arr.splice(index, 1);
+        }
+      });
+      let filteredArr = arr.filter(
+        (docs, index, callback) =>
+          index === callback.findIndex((element) => element.id === docs.id)
+      );
+      setComments(filteredArr);
+    });
+  };
 
   const addQuestion = async (values) => {
     try {
@@ -93,11 +94,11 @@ const QnA = ({ userObj }) => {
     try {
       for await (const question of questions) {
         await questionService.remove(question.id);
+        const commentsByQid = comments.filter(
+          (doc) => doc.questionId === question.id
+        );
+        commentsByQid.forEach((doc) => commentService.remove(doc.id));
       }
-      // for await (const comment of comments) {
-      //   await commentService.remove(comment.id);
-      // }
-      await commentService.remove();
     } catch (e) {
       showErrorMsg();
       console.log(e.message);
@@ -227,6 +228,7 @@ const QnA = ({ userObj }) => {
           questions={questions}
           fetchQuestions={fetchQuestions}
           userObj={userObj}
+          comments={comments}
         />
       ) : (
         <div>검색 결과가 없습니다.</div>

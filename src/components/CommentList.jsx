@@ -1,18 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import {
-  Comment,
-  List,
-  Popconfirm,
-  Button,
-  Form,
-  Input,
-  Avatar,
-  Tooltip,
-} from 'antd';
+import { Comment, List, Popconfirm, Button, Form, Input, Avatar } from 'antd';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
 import { commentService } from 'service/firebase/firestoreComments.js';
-import moment from 'moment';
 
 const StyledList = styled(List)``;
 const CommentContainer = styled.div`
@@ -115,11 +105,7 @@ const CommentList = ({ comments, userObj }) => {
                 }
                 author={comment.displayName}
                 content={comment.body}
-                datetime={
-                  <Tooltip title={comment.timestamp}>
-                    <span>{moment().fromNow()}</span>
-                  </Tooltip>
-                }
+                datetime={<span>{comment.timestamp}</span>}
               />
               {comment.email === userObj.email && (
                 <BtnContainer>

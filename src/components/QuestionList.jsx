@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button, Popconfirm, Collapse, Tag } from 'antd';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { CheckCircleTwoTone, CommentOutlined } from '@ant-design/icons';
 import { showSuccessMsg, showErrorMsg } from '../messages.js';
-import {
-  commentService,
-  commentsRef,
-} from 'service/firebase/firestoreComments.js';
+import { commentService } from 'service/firebase/firestoreComments.js';
 import { questionService } from 'service/config.js';
 const { Panel } = Collapse;
 
@@ -29,12 +26,16 @@ const ContentContainer = styled.div`
   flex-direction: column;
   padding: 0 2rem;
 `;
-const Content = styled.div`
-  padding: 2rem;
-`;
 const BtnContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+`;
+const Content = styled.div`
+  padding: 2rem;
+`;
+const Time = styled.div`
+  margin-top: 3rem;
+  opacity: 0.5;
 `;
 const StyledConfirm = styled(Popconfirm)`
   margin-left: 0.5rem;
@@ -59,38 +60,13 @@ const ReplyText = styled.span`
   }
 `;
 
-const QuestionList = ({ questions, fetchQuestions, userObj }) => {
+const QuestionList = ({ questions, fetchQuestions, userObj, comments }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState({});
   const [questionId, setQuestionId] = useState('');
-  const [docs, setDocs] = useState([]);
-
-  useEffect(() => {
-    handleFirestoreComments();
-  }, []);
-
-  const handleFirestoreComments = () => {
-    let arr = [];
-    commentsRef.onSnapshot((snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          arr.push({ ...change.doc.data(), id: change.doc.id });
-        }
-        if (change.type === 'removed') {
-          const index = arr.indexOf(change.doc.data());
-          arr.splice(index, 1);
-        }
-      });
-      let filteredArr = arr.filter(
-        (docs, index, callback) =>
-          index === callback.findIndex((element) => element.id === docs.id)
-      );
-      setDocs(filteredArr);
-    });
-  };
 
   const checkIfAdminReplied = (id) => {
-    const adminDocs = docs.filter((doc) => doc.displayName === '관리자');
+    const adminDocs = comments.filter((doc) => doc.displayName === '관리자');
     const docQid = adminDocs.map((doc) => doc.questionId);
     if (docQid.includes(id)) {
       return (
@@ -110,7 +86,8 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
   const deleteQuestion = async (id) => {
     try {
       await questionService.remove(id);
-      commentService.remove(id);
+      const commentsByQid = comments.filter((doc) => doc.questionId === id);
+      commentsByQid.forEach((doc) => commentService.remove(doc.id));
     } catch (e) {
       showErrorMsg();
     }
@@ -128,9 +105,9 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     setQuestionId(key);
   };
 
-  const showPanelHeader = (question) => {
+  const handlePanelHeader = (question) => {
     const { category, title, id } = question;
-    const commentsByQid = docs.filter((doc) => doc.questionId === id);
+    const commentsByQid = comments.filter((doc) => doc.questionId === id);
     return (
       <PanelHeader>
         {category && <Tag color="#87d068">{category}</Tag>}
@@ -148,13 +125,18 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
     );
   };
 
+  const handlePostedTime = (time) => {
+    const arr = time.substring(0, 10);
+    return arr;
+  };
+
   return (
     <StyledCollapse accordion onChange={handlePanelChange}>
       {questions.map((question) => (
         <>
           <StyledPanel
             key={question.id}
-            header={showPanelHeader(question)}
+            header={handlePanelHeader(question)}
             extra={checkIfAdminReplied(question.id)}
           >
             {showEdit ? (
@@ -168,7 +150,6 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
               <>
                 <ContentContainer>
                   <BtnContainer>
-                    <span>{question.createdAt}</span>
                     <Button onClick={() => openEditForm(question)}>수정</Button>
                     <StyledConfirm
                       title="정말 삭제하시겠습니까?"
@@ -179,7 +160,10 @@ const QuestionList = ({ questions, fetchQuestions, userObj }) => {
                       <Button>삭제</Button>
                     </StyledConfirm>
                   </BtnContainer>
-                  <Content>{question.body}</Content>
+                  <Content>
+                    <div>{question.body}</div>
+                    <Time>{handlePostedTime(question.createdAt)}</Time>
+                  </Content>
                 </ContentContainer>
 
                 <Comments questionId={questionId} userObj={userObj} />

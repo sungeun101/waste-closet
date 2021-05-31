@@ -26,7 +26,7 @@ const Comments = ({ questionId, userObj }) => {
         email,
         displayName,
         photoURL,
-        timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
+        timestamp: moment().calendar(),
       };
       await commentService.add(commentObj);
     } catch (e) {
