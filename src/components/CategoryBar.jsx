@@ -14,9 +14,9 @@ const StyledSelect = styled(Select)`
 `;
 
 const CategoryBar = ({ category, setCategory, setSelectedOption }) => {
-  useEffect(() => {
-    setCategory('# 카테고리');
-  }, []);
+  // useEffect(() => {
+  //   setCategory('# 카테고리');
+  // }, []);
 
   const handleChange = (value) => {
     setSelectedOption(value);

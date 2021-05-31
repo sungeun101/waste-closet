@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { showSuccessMsg, showErrorMsg } from '../messages';
 // import styled from 'styled-components';
 import { Form, Input, Button } from 'antd';
@@ -11,8 +11,16 @@ const EditForm = ({
   setShowEdit,
   fetchQuestions,
 }) => {
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('# 카테고리');
   const { id, title, body } = selectedQuestion;
+
+  useEffect(() => {
+    if (selectedQuestion.category === '') {
+      setCategory('# 카테고리');
+    } else {
+      setCategory(selectedQuestion.category);
+    }
+  }, []);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +32,11 @@ const EditForm = ({
 
   const updateQuestion = async () => {
     try {
-      await questionService.update(id, { title, body, category });
+      if (category === '# 카테고리') {
+        await questionService.update(id, { title, body, category: '' });
+      } else {
+        await questionService.update(id, { title, body, category });
+      }
     } catch (e) {
       showErrorMsg();
     }
@@ -33,6 +45,7 @@ const EditForm = ({
   };
 
   const getSelectedOption = (value) => {
+    console.log(value);
     setCategory(value);
   };
 
@@ -41,7 +54,7 @@ const EditForm = ({
       <CategoryBar
         category={category}
         setCategory={setCategory}
-        selectedOption={getSelectedOption}
+        setSelectedOption={getSelectedOption}
       />
       <Form.Item
         rules={[
