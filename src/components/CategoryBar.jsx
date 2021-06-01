@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button, Select } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -14,10 +14,6 @@ const StyledSelect = styled(Select)`
 `;
 
 const CategoryBar = ({ category, setCategory, setSelectedOption }) => {
-  // useEffect(() => {
-  //   setCategory('# 카테고리');
-  // }, []);
-
   const handleChange = (value) => {
     setSelectedOption(value);
     setCategory(value);

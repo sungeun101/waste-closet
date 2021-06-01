@@ -6,7 +6,7 @@ import CommentList from './CommentList.jsx';
 import { showErrorMsg, showSuccessMsg } from 'messages.js';
 import useFirestore from 'service/firebase/useFirestore.js';
 import { commentService } from 'service/firebase/firestoreComments.js';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const CommentContainer = styled.div`
   margin: clamp(1.8rem, 2.5vw, 2.8rem);
@@ -15,10 +15,11 @@ const CommentContainer = styled.div`
 const Comments = ({ questionId, userObj }) => {
   const { email, displayName, photoURL } = userObj;
   const { docs } = useFirestore(questionId);
-  // console.log(docs);
 
   const addComment = async (input) => {
     const { body } = input;
+    let now = dayjs();
+    let time = now.format('YYYY.MM.DD HH:mm');
     try {
       const commentObj = {
         questionId,
@@ -26,7 +27,7 @@ const Comments = ({ questionId, userObj }) => {
         email,
         displayName,
         photoURL,
-        timestamp: moment().calendar(),
+        timestamp: time,
       };
       await commentService.add(commentObj);
     } catch (e) {
