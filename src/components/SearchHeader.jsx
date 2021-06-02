@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Input, Tag } from 'antd';
 import styled from 'styled-components';
 import { Select } from 'antd';
-import { options, tags } from '../constants';
+import { options, items } from '../constants';
 const { Search } = Input;
 
 const Wrapper = styled.div`
@@ -36,7 +36,12 @@ const SearchHeader = ({
   searchValue,
   setSearchValue,
 }) => {
+  const [tags, setTags] = useState([]);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    shuffleTags(items);
+  }, []);
 
   const handleSearch = (value) => {
     if (!value) return;
@@ -64,6 +69,16 @@ const SearchHeader = ({
     setSearchValue(innerText);
     handleSearch(innerText);
     setSelected('# 분류별 검색');
+    shuffleTags(items);
+  };
+
+  const shuffleTags = (array) => {
+    for (let i = 0; i < array.length; i++) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    const selected = array.slice(0, 5);
+    setTags(selected);
   };
 
   return (
