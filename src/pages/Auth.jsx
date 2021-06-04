@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { showErrorMsg, showSuccessMsg } from 'messages';
 import { authService, firebaseInstance } from 'service/firebase/firebase';
-
-const layout = {
-  labelCol: {
-    span: 8,
-  },
-  wrapperCol: {
-    span: 16,
-  },
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
+import {
+  Section,
+  ImgBox,
+  ContentBox,
+  Contents,
+  Image,
+  Title,
+  SocialBtns,
+  SignUp,
+  AdminBtn,
+} from './Auth.elements';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -44,7 +40,11 @@ const Auth = () => {
       }
       console.log(data);
     } catch (error) {
-      showErrorMsg(error.message);
+      if (error.code === 'auth/email-already-in-use') {
+        showErrorMsg('이미 존재하는 이메일입니다.');
+      } else {
+        showErrorMsg('가입되지 않은 이메일입니다.');
+      }
     }
   };
 
@@ -80,79 +80,106 @@ const Auth = () => {
     const password = 'admin-waste-closet';
     try {
       await authService.signInWithEmailAndPassword(email, password);
-      // const user = authService.currentUser;
-      // user.updateProfile({
-      //   photoURL: `https://avatars.dicebear.com/api/bottts/admin.svg`,
-      //   displayName: '관리자',
-      // });
     } catch (error) {
       showErrorMsg(error.message);
     }
   };
 
   return (
-    <>
-      <div>
-        <Button onClick={toggleAccount}>
-          {newAccount ? 'Login' : 'Sign Up'}
-        </Button>
-      </div>
+    <Section>
+      <ImgBox>
+        <Image src="../../public/img/bg.jpg" alt="waste-background" />
+      </ImgBox>
 
-      <div>
-        <Button onClick={() => handleSocialLogin('google')}>
-          Continue with Google
-        </Button>
-        <Button onClick={() => handleSocialLogin('github')}>
-          Continue with Github
-        </Button>
-      </div>
-
-      <Form
-        {...layout}
-        name="basic"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            // {
-            //   type: 'email',
-            //   message: 'The input is not valid E-mail!',
-            // },
-            {
-              required: true,
-              message: 'Please input your E-mail!',
-            },
-          ]}
-        >
-          <Input name="email" onChange={handleChange} />
-        </Form.Item>
-
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-          <Input.Password name="password" onChange={handleChange} />
-        </Form.Item>
-
-        <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
-            {newAccount ? 'Sign Up' : 'Login'}
-          </Button>
-        </Form.Item>
-      </Form>
-
-      <div>
-        <Button onClick={handleAdminLogin}>관리자 로그인</Button>
-      </div>
-    </>
+      <ContentBox>
+        <Contents>
+          <Title>Login</Title>
+          <Form
+            name="basic"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+          >
+            <Form.Item>
+              <SocialBtns>
+                <Button onClick={() => handleSocialLogin('google')}>
+                  <img
+                    src="https://proofmart.com/wp-content/uploads/2021/01/google-g-logo-web.png"
+                    alt="google"
+                    style={{
+                      width: '1.5rem',
+                      marginRight: '0.3rem',
+                    }}
+                  />
+                  <span style={{ color: '#000' }}>Continue with Google</span>
+                </Button>
+                <Button onClick={() => handleSocialLogin('github')}>
+                  <i
+                    className="fab fa-github"
+                    style={{ marginRight: '0.5rem' }}
+                  ></i>
+                  <span>Continue with Github</span>
+                </Button>
+              </SocialBtns>
+            </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  type: 'email',
+                  required: true,
+                  message: '이메일을 입력해주세요.',
+                },
+              ]}
+            >
+              <Input name="email" onChange={handleChange} />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[{ required: true, message: '비밀번호를 입력해주세요.' }]}
+            >
+              <Input.Password name="password" onChange={handleChange} />
+            </Form.Item>
+            <Form.Item>
+              <SignUp>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                >
+                  {newAccount ? 'Sign up' : 'Login'}
+                </Button>
+                <div>
+                  {newAccount ? (
+                    <>
+                      가입하셨나요?
+                      <Button type="link" onClick={toggleAccount}>
+                        Login
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      처음이신가요?
+                      <Button type="link" onClick={toggleAccount}>
+                        Sign up
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </SignUp>
+            </Form.Item>
+            <Form.Item>
+              <AdminBtn>
+                <Button danger onClick={handleAdminLogin}>
+                  관리자 로그인
+                </Button>
+              </AdminBtn>
+            </Form.Item>
+          </Form>
+        </Contents>
+      </ContentBox>
+    </Section>
   );
 };
 

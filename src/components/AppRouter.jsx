@@ -16,8 +16,8 @@ const AppRouter = ({ isLoggedIn, userObj }) => {
   return (
     <Router>
       <GlobalStyle />
-      <Container>
-        {isLoggedIn ? (
+      {isLoggedIn ? (
+        <Container>
           <Switch>
             <Route path="/" exact>
               <Navigation userObj={userObj} />
@@ -31,17 +31,17 @@ const AppRouter = ({ isLoggedIn, userObj }) => {
               <NotFound />
             </Route>
           </Switch>
-        ) : (
-          <Switch>
-            <Route exact path="/">
-              <Auth />
-            </Route>
-            <Route>
-              <Redirect to="/" />
-            </Route>
-          </Switch>
-        )}
-      </Container>
+        </Container>
+      ) : (
+        <Switch>
+          <Route exact path="/">
+            <Auth />
+          </Route>
+          <Route>
+            <Redirect to="/" />
+          </Route>
+        </Switch>
+      )}
     </Router>
   );
 };
