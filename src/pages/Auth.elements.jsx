@@ -5,12 +5,16 @@ export const Section = styled.section`
   width: 100%;
   height: 100vh;
   display: flex;
+
+  @media screen and (max-width: 48rem) {
+    height: 100%;
+    min-height: 100vh;
+  }
 `;
 export const ImgBox = styled.div`
   position: relative;
   width: 50%;
   height: 100%;
-  overflow: auto;
 
   @media screen and (max-width: 48rem) {
     position: absolute;
@@ -25,15 +29,15 @@ export const Image = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: center/cover
-    url('https://images.pexels.com/photos/2447036/pexels-photo-2447036.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+  background: url('https://images.pexels.com/photos/2447036/pexels-photo-2447036.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')
+    no-repeat center/cover;
 `;
 export const ContentBox = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 50%;
-  height: 100%;
   z-index: 100;
 
   @media screen and (max-width: 48rem) {
@@ -43,9 +47,12 @@ export const ContentBox = styled.div`
 export const Contents = styled.div`
   background: rgb(255 255 255 / 0.9);
   padding: 1rem 2rem;
-  margin: 3rem;
-  border-radius: 10px;
-  box-shadow: 0px 0px 20px grey;
+  width: 70%;
+
+  @media screen and (max-width: 48rem) {
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px grey;
+  }
 `;
 export const Title = styled.h2`
   font-weight: bold;
@@ -60,9 +67,9 @@ export const SocialBtns = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 6rem;
+  height: 5rem;
   width: 100%;
-  padding-bottom: 1rem;
+  margin-top: 1rem 0;
 `;
 export const SignUp = styled.div`
   display: flex;
@@ -71,7 +78,6 @@ export const SignUp = styled.div`
   align-items: center;
 `;
 export const AdminBtn = styled.div`
-  margin-top: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
