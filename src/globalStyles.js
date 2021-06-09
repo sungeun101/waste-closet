@@ -12,11 +12,12 @@ const GlobalStyle = createGlobalStyle`
 export const Container = styled.div`
   z-index: 1;
   width: 100%;
-  max-width: 1300px;
+  max-width: 1400px;
   margin-right: auto;
   margin-left: auto;
   padding-right: 50px;
   padding-left: 50px;
+
   @media screen and (max-width: 48rem) {
     padding-right: 30px;
     padding-left: 30px;

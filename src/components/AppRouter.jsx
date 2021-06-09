@@ -7,41 +7,31 @@ import {
 } from 'react-router-dom';
 import GlobalStyle, { Container } from '../globalStyles';
 import Auth from '../pages/Auth';
-import Home from '../pages/Home';
 import NotFound from '../pages/NotFound';
-import QnA from '../pages/QnA';
-import Navigation from './Navigation';
+import Home from '../pages/Home';
+import Header from './Header';
 
 const AppRouter = ({ isLoggedIn, userObj }) => {
   return (
     <Router>
       <GlobalStyle />
-      {isLoggedIn ? (
-        <Container>
-          <Switch>
-            <Route path="/" exact>
-              <Navigation userObj={userObj} />
-              <Home />
-            </Route>
-            <Route path="/qna">
-              <Navigation userObj={userObj} />
-              <QnA userObj={userObj} />
-            </Route>
-            <Route>
-              <NotFound />
-            </Route>
-          </Switch>
-        </Container>
-      ) : (
-        <Switch>
-          <Route exact path="/">
-            <Auth />
-          </Route>
-          <Route>
-            <Redirect to="/" />
-          </Route>
-        </Switch>
-      )}
+      <Switch>
+        <Route exact path="/">
+          <Container>
+            <Header isLoggedIn={isLoggedIn} userObj={userObj} />
+            <Home userObj={userObj} />
+          </Container>
+        </Route>
+        <Route exact path="/auth">
+          <Auth />
+        </Route>
+        <Route>
+          <NotFound />
+        </Route>
+        <Route>
+          <Redirect to="/" />
+        </Route>
+      </Switch>
     </Router>
   );
 };

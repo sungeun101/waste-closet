@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { showErrorMsg, showSuccessMsg } from 'messages';
 import { authService, firebaseInstance } from 'service/firebase/firebase';
@@ -19,6 +20,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newAccount, setNewAccount] = useState(true);
+  const history = useHistory();
 
   const handleChange = (e) => {
     const {
@@ -39,7 +41,11 @@ const Auth = () => {
       } else {
         data = await authService.signInWithEmailAndPassword(email, password);
       }
-      console.log(data);
+      // console.log(data);
+      history.push('/');
+      if (newAccount) {
+        showSuccessMsg('가입되었습니다.');
+      }
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         showErrorMsg('이미 존재하는 이메일입니다.');
@@ -60,7 +66,8 @@ const Auth = () => {
         provider = new firebaseInstance.auth.GithubAuthProvider();
       }
       const data = await authService.signInWithPopup(provider);
-      console.log(data.user);
+      // console.log(data.user);
+      history.push('/');
     } catch (error) {
       if (error.code === 'auth/account-exists-with-different-credential') {
         if (error.credential.providerId === 'github.com') {
@@ -81,6 +88,7 @@ const Auth = () => {
     const password = 'admin-waste-closet';
     try {
       await authService.signInWithEmailAndPassword(email, password);
+      history.push('/');
     } catch (error) {
       showErrorMsg(error.message);
     }
@@ -94,7 +102,7 @@ const Auth = () => {
 
       <ContentBox>
         <Contents>
-          <Title>Login</Title>
+          <Title>{newAccount ? 'Sign Up' : 'Login'}</Title>
           <Form
             name="basic"
             initialValues={{ remember: true }}
@@ -111,7 +119,7 @@ const Auth = () => {
                     src="https://proofmart.com/wp-content/uploads/2021/01/google-g-logo-web.png"
                     alt="google"
                     style={{
-                      width: '1.5rem',
+                      width: '1.6rem',
                       marginRight: '0.3rem',
                     }}
                   />
