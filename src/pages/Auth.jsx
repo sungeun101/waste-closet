@@ -13,6 +13,7 @@ import {
   SignUp,
   AdminBtn,
 } from './Auth.elements';
+import { StyledButton } from './Auth.elements';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -101,7 +102,11 @@ const Auth = () => {
           >
             <Form.Item>
               <SocialBtns>
-                <Button onClick={() => handleSocialLogin('google')}>
+                <StyledButton
+                  shape="round"
+                  size="large"
+                  onClick={() => handleSocialLogin('google')}
+                >
                   <img
                     src="https://proofmart.com/wp-content/uploads/2021/01/google-g-logo-web.png"
                     alt="google"
@@ -111,14 +116,18 @@ const Auth = () => {
                     }}
                   />
                   <span style={{ color: '#000' }}>Continue with Google</span>
-                </Button>
-                <Button onClick={() => handleSocialLogin('github')}>
+                </StyledButton>
+                <StyledButton
+                  shape="round"
+                  size="large"
+                  onClick={() => handleSocialLogin('github')}
+                >
                   <i
                     className="fab fa-github"
                     style={{ marginRight: '0.5rem' }}
                   ></i>
                   <span>Continue with Github</span>
-                </Button>
+                </StyledButton>
               </SocialBtns>
             </Form.Item>
             <Form.Item
@@ -145,6 +154,8 @@ const Auth = () => {
               <SignUp>
                 <Button
                   type="primary"
+                  shape="round"
+                  size="large"
                   htmlType="submit"
                   className="login-form-button"
                 >
@@ -171,7 +182,7 @@ const Auth = () => {
             </Form.Item>
             <Form.Item>
               <AdminBtn>
-                <Button danger onClick={handleAdminLogin}>
+                <Button danger shape="round" onClick={handleAdminLogin}>
                   관리자 로그인
                 </Button>
               </AdminBtn>

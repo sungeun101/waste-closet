@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import styled from 'styled-components';
 
 export const Section = styled.section`
@@ -47,9 +48,11 @@ export const ContentBox = styled.div`
 export const Contents = styled.div`
   background: rgb(255 255 255 / 0.9);
   padding: 1rem 2rem;
+  margin: 2rem 0;
   width: 70%;
 
   @media screen and (max-width: 48rem) {
+    width: 80%;
     border-radius: 10px;
     box-shadow: 0px 0px 20px grey;
   }
@@ -67,9 +70,14 @@ export const SocialBtns = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 5rem;
+  height: 6rem;
   width: 100%;
   margin-top: 1rem 0;
+`;
+export const StyledButton = styled(Button)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 export const SignUp = styled.div`
   display: flex;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import AppRouter from 'components/AppRouter';
 import { authService } from 'service/firebase/firebase';
+import { Spin } from 'antd';
 
 function App() {
   const [init, setInit] = useState(false);
@@ -47,7 +48,16 @@ function App() {
       setUserObj={setUserObj}
     />
   ) : (
-    'Initializing...'
+    <div
+      style={{
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Spin size="large" tip="Loading..." />
+    </div>
   );
 }
 
