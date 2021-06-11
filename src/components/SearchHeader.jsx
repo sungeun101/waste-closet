@@ -40,6 +40,12 @@ const StyledTag = styled(Tag)`
   &:hover {
     cursor: pointer;
   }
+
+  @media screen and (max-width: 48rem) {
+    &:last-child {
+      display: none;
+    }
+  }
 `;
 
 const SearchHeader = ({
