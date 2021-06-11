@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Avatar, Button, Menu } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Avatar, Breadcrumb, Button } from 'antd';
+import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { showErrorMsg } from 'messages';
 import { authService } from 'service/firebase/firebase';
 
@@ -10,6 +10,7 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 1rem;
 `;
 const StyledAvatar = styled(Avatar)`
   margin-right: 0.3rem;
@@ -19,16 +20,6 @@ const StyledButton = styled(Button)`
 `;
 
 const Header = ({ isLoggedIn, userObj }) => {
-  const [current, setCurrent] = useState('');
-
-  useEffect(() => {
-    setCurrent(document.location.pathname);
-  }, []);
-
-  const handleClick = (e) => {
-    setCurrent(e.key);
-  };
-
   const history = useHistory();
 
   const onLogOutClick = async () => {
@@ -37,7 +28,6 @@ const Header = ({ isLoggedIn, userObj }) => {
     } catch (error) {
       showErrorMsg(error.message);
     }
-    // history.push('/');
   };
 
   const onSignUpClick = async () => {
@@ -46,11 +36,12 @@ const Header = ({ isLoggedIn, userObj }) => {
 
   return (
     <Nav>
-      <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
-        <Menu.Item key="/qna" icon={<QuestionCircleOutlined />}>
-          <Link to="/qna">Q&amp;A</Link>
-        </Menu.Item>
-      </Menu>
+      <Breadcrumb>
+        <Breadcrumb.Item href="">
+          <QuestionCircleOutlined />
+          <span>Q&amp;A</span>
+        </Breadcrumb.Item>
+      </Breadcrumb>
 
       <div>
         {isLoggedIn ? (
@@ -61,7 +52,7 @@ const Header = ({ isLoggedIn, userObj }) => {
           </>
         ) : (
           <>
-            <StyledAvatar />
+            <StyledAvatar icon={<UserOutlined />} />
             <span>Welcome!</span>
             <StyledButton onClick={onSignUpClick}>Sign Up</StyledButton>
           </>

@@ -12,12 +12,26 @@ const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   margin-top: 1.5rem;
+
+  @media screen and (max-width: 48rem) {
+    flex-direction: column;
+    align-items: normal;
+  }
 `;
 const StyledSearch = styled(Search)`
   margin-right: 1rem;
+
+  @media screen and (max-width: 48rem) {
+    order: 2;
+    margin-top: 0.5rem;
+  }
 `;
 const StyledSelect = styled(Select)`
   width: 10.5em;
+
+  @media screen and (max-width: 48rem) {
+    order: 1;
+  }
 `;
 const TagContainer = styled.div`
   margin-top: 0.5rem;
@@ -89,7 +103,7 @@ const SearchHeader = ({
           value={searchValue}
           onChange={handleSearchChange}
           allowClear
-          enterButton="Search"
+          enterButton
           size="large"
           onSearch={handleSearch}
           ref={inputRef}

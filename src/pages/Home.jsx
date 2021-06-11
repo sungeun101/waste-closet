@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Skeleton } from 'antd';
+import { Form, Button, Skeleton, Tooltip } from 'antd';
 import SearchHeader from '../components/SearchHeader';
 import ModalForm from '../components/ModalForm';
 import {
@@ -9,7 +9,7 @@ import {
   StyledPagination,
 } from './Home.elements';
 import QuestionList from '../components/QuestionList';
-import { showSuccessMsg, showErrorMsg } from '../messages';
+import { showSuccessMsg, showErrorMsg, showWarningMsg } from '../messages';
 import {
   DeleteOutlined,
   ReloadOutlined,
@@ -183,6 +183,12 @@ const Home = ({ userObj }) => {
         setSearchValue={setSearchValue}
       />
       <BtnContainer>
+        {!userObj && (
+          <Button type="primary" onClick={() => showWarningMsg()}>
+            <EditOutlined />
+            질문하기
+          </Button>
+        )}
         {userObj && userObj.displayName !== '관리자' && (
           <>
             <Button type="primary" onClick={showModal}>

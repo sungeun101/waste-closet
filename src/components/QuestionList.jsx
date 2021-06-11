@@ -4,7 +4,7 @@ import { Button, Popconfirm, Collapse, Tag } from 'antd';
 import Comments from './Comments.jsx';
 import EditForm from './EditForm.jsx';
 import { CheckCircleTwoTone, CommentOutlined } from '@ant-design/icons';
-import { showSuccessMsg, showErrorMsg } from '../messages.js';
+import { showSuccessMsg, showErrorMsg, showWarningMsg } from '../messages.js';
 import { commentService } from 'service/firebase/firestoreComments.js';
 import { questionService } from 'service/config.js';
 const { Panel } = Collapse;
@@ -26,6 +26,10 @@ const ContentContainer = styled.div`
   flex-direction: column;
   padding: 0 2rem;
 `;
+const CommentContainer = styled.div`
+  margin: clamp(1.8rem, 2.5vw, 2.8rem);
+`;
+
 const BtnContainer = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -103,11 +107,15 @@ const QuestionList = ({ questions, fetchQuestions, userObj, comments }) => {
   const handlePanelChange = async (key) => {
     setShowEdit(false);
     setQuestionId(key);
+    if (!userObj) {
+      showWarningMsg('댓글을 보시려면 로그인을 해주세요.');
+    }
   };
 
   const handlePanelHeader = (question) => {
     const { category, title, id } = question;
     const commentsByQid = comments.filter((doc) => doc.questionId === id);
+
     return (
       <PanelHeader>
         {category && <Tag color="#87d068">{category}</Tag>}
@@ -149,24 +157,31 @@ const QuestionList = ({ questions, fetchQuestions, userObj, comments }) => {
             ) : (
               <>
                 <ContentContainer>
-                  <BtnContainer>
-                    <Button onClick={() => openEditForm(question)}>수정</Button>
-                    <StyledConfirm
-                      title="정말 삭제하시겠습니까?"
-                      onConfirm={() => deleteQuestion(question.id)}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button>삭제</Button>
-                    </StyledConfirm>
-                  </BtnContainer>
+                  {userObj && (
+                    <BtnContainer>
+                      <Button onClick={() => openEditForm(question)}>
+                        수정
+                      </Button>
+                      <StyledConfirm
+                        title="정말 삭제하시겠습니까?"
+                        onConfirm={() => deleteQuestion(question.id)}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <Button>삭제</Button>
+                      </StyledConfirm>
+                    </BtnContainer>
+                  )}
                   <Content>
                     <div>{question.body}</div>
                     <Time>{handlePostedTime(question.createdAt)}</Time>
                   </Content>
                 </ContentContainer>
-
-                <Comments questionId={questionId} userObj={userObj} />
+                <CommentContainer>
+                  {userObj && (
+                    <Comments questionId={questionId} userObj={userObj} />
+                  )}
+                </CommentContainer>
               </>
             )}
           </StyledPanel>

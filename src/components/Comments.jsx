@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Comment } from 'antd';
 import CommentForm from './CommentForm.jsx';
 import CommentList from './CommentList.jsx';
@@ -7,10 +6,6 @@ import { showErrorMsg, showSuccessMsg } from 'messages.js';
 import useFirestore from 'service/firebase/useFirestore.js';
 import { commentService } from 'service/firebase/firestoreComments.js';
 import dayjs from 'dayjs';
-
-const CommentContainer = styled.div`
-  margin: clamp(1.8rem, 2.5vw, 2.8rem);
-`;
 
 const Comments = ({ questionId, userObj }) => {
   const { email, displayName, photoURL } = userObj;
@@ -38,10 +33,10 @@ const Comments = ({ questionId, userObj }) => {
   };
 
   return (
-    <CommentContainer>
+    <>
       {docs && <CommentList comments={docs} userObj={userObj} />}
       <Comment content={<CommentForm addComment={addComment} />} />
-    </CommentContainer>
+    </>
   );
 };
 
